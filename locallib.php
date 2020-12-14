@@ -56,20 +56,20 @@ function dialoguegrade_search_potentials(\mod_dialoguegrade\dialogue $dialogue, 
     $context            = $dialogue->context;
     $course             = $dialogue->course;
     $usecoursegroups    = $dialogue->activityrecord->usecoursegroups;
-    
-	if (has_capability('mod/dialoguegrade:bepotentialteacher', $context, $USER->id, false) ) { // edit jjupin march 25, 2019
-		list($esql, $eparams) = get_enrolled_sql($context, 'mod/dialoguegrade:receive', null, true);		
-	} else {
-		list($esql, $eparams) = get_enrolled_sql($context, 'mod/dialoguegrade:bepotentialteacher', null, true);// "Student"; | edit jjupin march 25, 2019
-	}
-    
+
+    if (has_capability('mod/dialoguegrade:bepotentialteacher', $context, $USER->id, false) ) { // edit jjupin march 25, 2019
+        list($esql, $eparams) = get_enrolled_sql($context, 'mod/dialoguegrade:receive', null, true);
+    } else {
+        list($esql, $eparams) = get_enrolled_sql($context, 'mod/dialoguegrade:bepotentialteacher', null, true);// "Student"; | edit jjupin march 25, 2019
+    }
+
     $params = array_merge($params, $eparams);
 
     $basesql = "FROM {user} u
                 JOIN ($esql) je ON je.id = u.id";
 
     if ($usecoursegroups) {
-        if (!has_capability('moodle/site:accessallgroups', $context)) { 
+        if (!has_capability('moodle/site:accessallgroups', $context)) {
             $groupings = groups_get_user_groups($course->id, $USER->id);
             $allgroups = $groupings[0];
             if ($allgroups) {
@@ -176,7 +176,7 @@ function dialoguegrade_get_user_details(\mod_dialoguegrade\dialogue $dialogue, $
 
     $context        = $dialogue->context;
     $requiredfields = user_picture::fields('u');
-    
+
     if (!isset($cache)) {
         $cache = cache::make('mod_dialoguegrade', 'userdetails');
     }
@@ -188,9 +188,9 @@ function dialoguegrade_get_user_details(\mod_dialoguegrade\dialogue $dialogue, $
         }
         $cache->set($context->id, $enrolledusers);
     }
-    
+
     $cachedusers = $cache->get($context->id);
-    
+
     if (!isset($cachedusers[$userid])) {
         $sql = "SELECT $requiredfields
                   FROM {user} u
@@ -426,7 +426,7 @@ function dialoguegrade_get_conversations_count($cm, $state = null) {
     } else {
         $instates  = $states;
     }
-    
+
     $context = \context_module::instance($cm->id, IGNORE_MISSING);
 
     // standard query stuff
@@ -453,7 +453,7 @@ function dialoguegrade_get_conversations_count($cm, $state = null) {
     if ($joins) {
         $join = ' ' . implode("\n", $joins);
     }
-   
+
     if ($wheres) {
         $where = " WHERE " . implode(" AND ", $wheres);
     }
@@ -509,10 +509,10 @@ function dialoguegrade_get_humanfriendly_dates($epoch) {
 
     //$customdatetime['datefull'] = $datetime['mday'] . ' ' . $datetime['month'] . ' ' . $datetime['year'];
     $customdatetime['datefull'] = $datetime['mday'] . ' ' . get_string($datetime['month'], 'dialoguegrade') . ' ' . $datetime['year'];
-    
+
     //$customdatetime['dateshort'] = $datetime['mday'] . ' ' . $datetime['month'];
     $customdatetime['dateshort'] = $datetime['mday'] . ' ' . get_string($datetime['month'], 'dialoguegrade');
-    
+
     $customdatetime['time'] = date("g:i a", $epoch);
     $customdatetime['today'] = ($epoch >= strtotime("today")) ? true : false;
     $customdatetime['currentyear'] = ($epoch >= strtotime("-1 year")) ? true : false;
@@ -536,7 +536,7 @@ function dialoguegrade_shorten_html($html, $ideal = 30, $exact = false, $ending 
 
 /**
  * Helper function, check if draftid contains any files
- * 
+ *
  * @global type $USER
  * @param type $draftid
  * @return boolean

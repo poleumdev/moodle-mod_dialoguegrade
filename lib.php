@@ -98,13 +98,13 @@ function dialoguegrade_update_instance($data, $mform) {
 function dialoguegrade_delete_instance($id) {
     global $DB;
     $dialogue = $DB->get_record('dialoguegrade', array('id'=>$id), '*', MUST_EXIST);
-    
+
     $cm = get_coursemodule_from_instance('dialoguegrade', $dialogue->id, $dialogue->course, false, MUST_EXIST);
-    
+
     $context = context_module::instance($cm->id);
-    
+
     $fs = get_file_storage();
-    
+
     // delete files
     $fs->delete_area_files($context->id);
     // delete flags
@@ -117,7 +117,7 @@ function dialoguegrade_delete_instance($id) {
     $DB->delete_records('dialoguegrade_conversations', array('dialogueid'=>$dialogue->id));
     // delete dialogue
     $DB->delete_records('dialoguegrade', array('id'=>$dialogue->id));
-    
+
     return true;
 }
 
@@ -171,7 +171,7 @@ function dialoguegrade_cm_info_view(cm_info $cm) {
 function dialoguegrade_user_outline($course, $user, $mod, $dialogue) {
     global $DB;
 
-    $sql = "SELECT COUNT(DISTINCT dm.timecreated) AS count, 
+    $sql = "SELECT COUNT(DISTINCT dm.timecreated) AS count,
                      MAX(dm.timecreated) AS timecreated
               FROM {dialoguegrade_messages} dm
              WHERE dm.dialogueid = :dialogueid
@@ -338,8 +338,6 @@ function dialoguegrade_pluginfile($course, $cm, $context, $filearea, $args, $for
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
-
-//AJOUT
 /**
  * Create grade item for given dialogue.
  *
@@ -347,16 +345,16 @@ function dialoguegrade_pluginfile($course, $cm, $context, $filearea, $args, $for
  * @param array $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return int 0 if ok, error code otherwise
  */
-function dialoguegrade_grade_item_update($dialogue, $grades=NULL) {
+function dialoguegrade_grade_item_update($dialogue, $grades=null) {
     global $CFG, $DB;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+    if (!function_exists('grade_update')) {
         require_once($CFG->libdir.'/gradelib.php');
     }
 
     if (array_key_exists('cmidnumber', $dialogue)) {
-        $params = array('itemname'=>$dialogue->name, 'idnumber'=>$dialogue->cmidnumber);
+        $params = array('itemname' => $dialogue->name, 'idnumber' => $dialogue->cmidnumber);
     } else {
-        $params = array('itemname'=>$dialogue->name);
+        $params = array('itemname' => $dialogue->name);
     }
 
     if ($dialogue->grade > 0) {
@@ -364,7 +362,7 @@ function dialoguegrade_grade_item_update($dialogue, $grades=NULL) {
         $params['grademax']   = $dialogue->grade;
         $params['grademin']   = 0;
         $params['multfactor'] = 1.0;
-    } else if($dialogue->grade < 0) {
+    } else if ($dialogue->grade < 0) {
         $params['gradetype'] = GRADE_TYPE_SCALE;
         $params['scaleid']   = -$dialogue->grade;
     } else {
@@ -372,9 +370,9 @@ function dialoguegrade_grade_item_update($dialogue, $grades=NULL) {
         $params['multfactor'] = 1.0;
     }
 
-    if ($grades  === 'reset') {
+    if ($grades === 'reset') {
         $params['reset'] = true;
-        $grades = NULL;
+        $grades = null;
     }
 
     return grade_update('mod/dialoguegrade', $dialogue->course, 'mod', 'dialoguegrade', $dialogue->id, 0, $grades, $params);
@@ -390,21 +388,21 @@ function dialoguegrade_grade_item_update($dialogue, $grades=NULL) {
  */
 function dialoguegrade_update_grades($conversation=null, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
+    if (!function_exists('grade_update')) {
         require_once($CFG->libdir.'/gradelib.php');
     }
 
     if ($conversation != null) {
         // Recherche de l'enregistrement dialogue correspondant.
-        $dialogueObj = $conversation->__get("dialogue");
-        $dialoguebdd = $dialogueObj->__get("module");
+        $dialogueobj = $conversation->__get("dialogue");
+        $dialoguebdd = $dialogueobj->__get("module");
 
         if ($grades = dialoguegrade_get_user_grades($conversation, $userid)) {
             dialoguegrade_grade_item_update($dialoguebdd, $grades);
         } else if ($userid && $nullifnone) {
             $grade = new object();
             $grade->userid   = $userid;
-            $grade->rawgrade = NULL;
+            $grade->rawgrade = null;
             dialoguegrade_grade_item_update($dialoguebdd, $grade);
         } else {
             dialoguegrade_grade_item_update($dialoguebdd);
@@ -427,20 +425,19 @@ function dialoguegrade_update_grades($conversation=null, $userid=0, $nullifnone=
     }
 }
 
-
-//
 function dialoguegrade_grade_item_delete_all($dialogue) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
-    return grade_update('mod/dialoguegrade', $dialogue->course, 'mod', 'dialoguegrade', $dialogue->id, 0, NULL, array('deleted'=>1));
+    return grade_update('mod/dialoguegrade', $dialogue->course, 'mod',
+                        'dialoguegrade', $dialogue->id, 0, null, array('deleted' => 1));
 }
 
 function dialoguegrade_grade_item_delete($dialogue) {
     dialoguegrade_grade_item_delete_all($dialogue);
 }
 
-function dialoguegrade_grade_item_delete_user($dialogueBDD, $userid, $conversationid) {
+function dialoguegrade_grade_item_delete_user($dialoguebdd, $userid, $conversationid) {
     global $CFG, $DB, $USER;
     require_once($CFG->libdir.'/gradelib.php');
 
@@ -450,7 +447,7 @@ function dialoguegrade_grade_item_delete_user($dialogueBDD, $userid, $conversati
     $sql = "SELECT '$userid' as userid, timecreated as datesubmitted, 0 as feedbackformat,
     '' as rawgrade, '' as feedback, '$teacherid' as usermodifier, timecreated as dategraded
     FROM {dialoguegrade_messages}
-    WHERE dialogueid = '$dialogueBDD->id' and conversationid= '$conversationid' ".$userstr;
+    WHERE dialogueid = '$dialoguebdd->id' and conversationid= '$conversationid' ".$userstr;
 
     $grades = $DB->get_records_sql($sql);
     if ($grades) {
@@ -459,13 +456,13 @@ function dialoguegrade_grade_item_delete_user($dialogueBDD, $userid, $conversati
         }
     }
 
-    $params = array('itemname'=>$dialogueBDD->name);
+    $params = array('itemname' => $dialoguebdd->name);
     $params['gradetype']  = GRADE_TYPE_VALUE;
-    $params['grademax']   = $dialogueBDD->grade;
+    $params['grademax']   = $dialoguebdd->grade;
     $params['grademin']   = 0;
     $params['multfactor'] = 1.0;
 
-    return grade_update('mod/dialoguegrade', $dialogueBDD->course, 'mod', 'dialoguegrade', $dialogueBDD->id, 0, $grades, $params);
+    return grade_update('mod/dialoguegrade', $dialoguebdd->course, 'mod', 'dialoguegrade', $dialoguebdd->id, 0, $grades, $params);
 }
 
 function dialoguegrade_get_user_grades($conversation, $userid=0) {
@@ -488,11 +485,11 @@ function dialoguegrade_get_user_grades($conversation, $userid=0) {
         return false;
     } else {
         $dialogue = $conversation->__get("dialogue");
-        $dialogueBDD = $dialogue->__get("module");
+        $dialoguebdd = $dialogue->__get("module");
         $sql = "SELECT '$userid' as userid, timecreated as datesubmitted, 0 as feedbackformat,
-                        grading as rawgrade, body as feedback, '$teacherid' as usermodifier, timecreated as dategraded 
+                        grading as rawgrade, body as feedback, '$teacherid' as usermodifier, timecreated as dategraded
                 FROM {dialoguegrade_messages}
-                WHERE dialogueid = '$dialogueBDD->id' and conversationid= '$conversation->conversationid' ".$userstr;
+                WHERE dialogueid = '$dialoguebdd->id' and conversationid= '$conversation->conversationid' ".$userstr;
 
         $grades = $DB->get_records_sql($sql);
 
@@ -507,10 +504,10 @@ function dialoguegrade_get_user_grades($conversation, $userid=0) {
     }
 }
 
-function dialoguegrade_get_completion_state($course,$cm,$userid,$type) {
-    global $CFG,$DB;
+function dialoguegrade_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
 
-    if (!($dlggrade=$DB->get_record('dialoguegrade',array('id'=>$cm->instance)))) {
+    if (!($dlggrade = $DB->get_record('dialoguegrade', array('id' => $cm->instance)))) {
         throw new Exception("Can't find dialoguegrade {$cm->instance}");
     }
 
@@ -518,9 +515,9 @@ function dialoguegrade_get_completion_state($course,$cm,$userid,$type) {
               from {dialoguegrade_participants}
              where userid = ?
                and dialogueid=?";
-    $conversationList = $DB->get_recordset_sql ( $sql, array ($userid, $cm->instance));
+    $conversationlist = $DB->get_recordset_sql ( $sql, array ($userid, $cm->instance));
     $data = array ();
-    foreach ( $conversationList as $conv ) {
+    foreach ( $conversationlist as $conv ) {
         $data [] = $conv;
     }
     if (!isset($data[0])) {
@@ -529,19 +526,19 @@ function dialoguegrade_get_completion_state($course,$cm,$userid,$type) {
     $conversation = $data[0]->conversationid;
 
     $sql = "select * from {dialoguegrade_messages} where conversationid = ?";
-    $conversationList = $DB->get_recordset_sql ( $sql, array ($conversation));
-    $nbStudent = 0;
-    $nbResponse = 0;
-    foreach ( $conversationList as $conv ) {
+    $conversationlist = $DB->get_recordset_sql ( $sql, array ($conversation));
+    $nbstudent = 0;
+    $nbresponse = 0;
+    foreach ($conversationlist as $conv) {
         if ($conv->authorid == $userid) {
-            $nbStudent ++;
+            $nbstudent ++;
         } else {
-            $nbResponse ++;
+            $nbresponse ++;
         }
     }
-    $result=$type;
+    $result = $type;
     if ($dlggrade->completionsend) {
-        $value = $nbStudent >= $dlggrade->completionsend;
+        $value = $nbstudent >= $dlggrade->completionsend;
         if ($type == COMPLETION_AND) {
             $result = $result && $value;
         } else {
@@ -549,7 +546,7 @@ function dialoguegrade_get_completion_state($course,$cm,$userid,$type) {
         }
     }
     if ($dlggrade->completionreplies) {
-        $value = $nbResponse  >= $dlggrade->completionreplies;
+        $value = $nbresponse >= $dlggrade->completionreplies;
         if ($type == COMPLETION_AND) {
             $result = $result && $value;
         } else {
@@ -559,13 +556,13 @@ function dialoguegrade_get_completion_state($course,$cm,$userid,$type) {
     return $result;
 }
 
-//on demande confirmation de supprimer les journaux
+// On demande confirmation de supprimer les journaux.
 function dialoguegrade_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'dialoguegradeheader', 'Carnets de bord');
     $mform->addElement('advcheckbox', 'reset_cbord', 'Supprimer les entrées');
 }
 
-//oui par défaut
+// Oui par défaut.
 function dialoguegrade_reset_course_form_defaults($course) {
     return array('reset_cbord' => 1);
 }
@@ -574,19 +571,19 @@ function dialoguegrade_reset_course_form_defaults($course) {
  * On supprime toutes les instances du carnet de bord dans le cours
  * si reset_cbord definit (coché)
  * donc on supprime tout les dialogueid pour course = $data->courseid
- */ 
+ */
 function dialoguegrade_reset_userdata($data) {
     global $DB;
     $status = array();
     if (!empty($data->reset_cbord)) {
         // Rechercher les instances dialoguegrade du cours.
-        $req = "select id from {course_modules} 
+        $req = "select id from {course_modules}
              where module in (select id from {modules} where name='dialoguegrade')
              and course = ?";
-        $cmidList = $DB->get_recordset_sql ($req, array ($data->courseid));
+        $cmidlist = $DB->get_recordset_sql ($req, array ($data->courseid));
         // Delete files.
-        $fs = get_file_storage();    
-        foreach ($cmidList as $cmid) {
+        $fs = get_file_storage();
+        foreach ($cmidlist as $cmid) {
             $context = context_module::instance($cmid->id);
             $fs->delete_area_files($context->id);
         }
@@ -610,7 +607,7 @@ function dialoguegrade_reset_userdata($data) {
         $DB->execute($req, array($data->courseid));
 
         // Delete conversations.
-        $req = "delete from {dialoguegrade_conversations} 
+        $req = "delete from {dialoguegrade_conversations}
                   where dialogueid in (select id from {dialoguegrade}
                                         where course = ?)";
         $DB->execute($req, array($data->courseid));

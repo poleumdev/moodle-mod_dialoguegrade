@@ -17,7 +17,7 @@
 define('AJAX_SCRIPT', true);
 
 /**
- *
+ * Routine ajax.
  * @package mod-dialogue
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,15 +25,15 @@ define('AJAX_SCRIPT', true);
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot.'/mod/dialoguegrade/locallib.php');
 
-// course module identifier
+// Course module identifier.
 $id = required_param('id', PARAM_INT);
-// search text
+// Search text.
 $q = required_param('q', PARAM_RAW);
-// check access.
-if (!isloggedin()) {;
+// Check access.
+if (!isloggedin()) {
     print_error('mustbeloggedin');
 }
-// check session
+// Check session.
 if (!confirm_sesskey()) {
     print_error('invalidsesskey');
 }

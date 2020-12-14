@@ -45,7 +45,7 @@ $context = \context_module::instance($cm->id);
 
 require_login($course, false, $cm);
 
-// now set params on pageurl will later be set on $PAGE
+// Now set params on pageurl will later be set on $PAGE.
 $pageurl = new moodle_url('/mod/dialoguegrade/view.php');
 $pageurl->param('id', $cm->id);
 $pageurl->param('state', $state);
@@ -54,7 +54,7 @@ if ($page) {
 }
 $pageurl->param('sort', $sort);
 $pageurl->param('direction', $direction);
-// set up a return url that will be stored to session
+// Set up a return url that will be stored to session.
 $returnurl = clone($pageurl);
 $returnurl->remove_params('page');
 $SESSION->dialoguereturnurl = $returnurl->out(false);
@@ -87,14 +87,13 @@ if (!empty($dialogue->activityrecord->intro)) {
     echo $OUTPUT->box(format_module_intro('dialoguegrade', $dialogue->activityrecord, $cm->id), 'generalbox', 'intro');
 }
 
-// render tab navigation, toggle button groups and order by dropdown
+// Render tab navigation, toggle button groups and order by dropdown.
 echo $renderer->tab_navigation($dialogue);
-//echo $renderer->state_button_group();
 echo $renderer->list_sortby(\mod_dialoguegrade\conversations_by_author::get_sort_options(), $sort, $direction);
 echo $renderer->conversation_listing($list);
 echo $OUTPUT->footer($course);
 
-// Trigger course module viewed event
+// Trigger course module viewed event.
 $eventparams = array(
     'context' => $context,
     'objectid' => $activityrecord->id

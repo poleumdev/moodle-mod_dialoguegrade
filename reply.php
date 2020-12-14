@@ -80,11 +80,11 @@ if ($form->is_submitted()) {
     $formaction = $form->get_submit_action();
     switch ($formaction) {
         case 'cancel':
-        	$completion=new completion_info($course);
-        	if($completion->is_enabled($cm) ) {//&& $forum->completionposts
-        		$completion->update_state($cm,COMPLETION_COMPLETE);
-        	}
-        	
+            $completion = new completion_info($course);
+            if ($completion->is_enabled($cm)) {
+                $completion->update_state($cm, COMPLETION_COMPLETE);
+            }
+
             redirect($returnurl);
         case 'send':
             if ($form->is_validated()){
@@ -94,23 +94,22 @@ if ($form->is_submitted()) {
                     'other' => array('conversationid' => $conversation->conversationid) );
                 $event = \mod_dialoguegrade\event\reply_created::create($eventparams);
                 $event->trigger();
-                
-                $completion=new completion_info($course);
-                if($completion->is_enabled($cm) ) {//&& $forum->completionposts
-                	$completion->update_state($cm,COMPLETION_COMPLETE);
+
+                $completion = new completion_info($course);
+                if ($completion->is_enabled($cm) ) {
+                    $completion->update_state($cm,COMPLETION_COMPLETE);
                 }
-                
-                
+
                 redirect($returnurl, get_string('replysent', 'dialoguegrade'));
             }
-            break; // leave switch to display form page
+            break;
         case 'save':
             if ($form->is_validated()) {
                 $reply->save_form_data();
-                
+
                 redirect($draftsurl, get_string('changessaved'));
             }
-            break; // leave switch to display form page
+            break;
        case 'trash':
             $reply->trash();
             redirect($draftsurl, get_string('draftreplytrashed', 'dialoguegrade'));
@@ -118,14 +117,14 @@ if ($form->is_submitted()) {
 }
 $renderer = $PAGE->get_renderer('mod_dialoguegrade');
 echo $OUTPUT->header();
-// render conversation
+// Render conversation.
 echo $renderer->render($conversation);
-// render replies
+// Render replies.
 if ($conversation->replies()) {
     foreach ($conversation->replies() as $reply) {
         echo $renderer->render($reply);
     }
 }
-// output form
+// Output form.
 $form->display();
 echo $OUTPUT->footer($course);

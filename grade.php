@@ -37,39 +37,39 @@ $itemnumber = optional_param('itemnumber', 0, PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT); // Graded user ID (optional).
 
 if ($userid != null) {
-	
-	$sql = "select conversationid
-    	      from {dialoguegrade_participants} 
-        	 where userid = ?
-        	   and dialogueid=?";
-	$conversationList = $DB->get_recordset_sql ( $sql, array ($userid, $cm->instance));
-	$data = array ();
-	foreach ( $conversationList as $conv ) {
-		$data [] = $conv;
-	}
-	if (count($data) == 1) {
-		redirect('conversation.php?id='.$id.'&action=view&conversationid='.$data[0]->conversationid);
-		return;
-	} elseif (count($data) == 0) {
-		redirect('view.php?id='.$id);
-		return;
-	}
-//passer en revue les conversation pour prendre la premiere avec la note du carnet
-	$gradeid = optional_param('gradeid', 0, PARAM_INT);
-	$grade = $DB->get_record('grade_grades', array('id' => $gradeid), '*', MUST_EXIST);
-	foreach ( $data as $conv ) {
-		$sql = "select conversationid 
-				  from {dialoguegrade_messages}
-				 where conversationid = ?
-				   and grading = ?
-				   and dialogueid = ?";
-		$test = $DB->record_exists_sql($sql, array ($conv->conversationid, $grade->rawgrade, $cm->instance));
-		if ($test) {
-			redirect('conversation.php?id='.$id.'&action=view&conversationid='.$conv->conversationid);
-			return;
-		}
-	}
 
-} 
+    $sql = "select conversationid
+              from {dialoguegrade_participants}
+             where userid = ?
+               and dialogueid=?";
+    $conversationList = $DB->get_recordset_sql ( $sql, array ($userid, $cm->instance));
+    $data = array ();
+    foreach ( $conversationList as $conv ) {
+        $data [] = $conv;
+    }
+    if (count($data) == 1) {
+        redirect('conversation.php?id='.$id.'&action=view&conversationid='.$data[0]->conversationid);
+        return;
+    } elseif (count($data) == 0) {
+        redirect('view.php?id='.$id);
+        return;
+    }
+//passer en revue les conversation pour prendre la premiere avec la note du carnet
+    $gradeid = optional_param('gradeid', 0, PARAM_INT);
+    $grade = $DB->get_record('grade_grades', array('id' => $gradeid), '*', MUST_EXIST);
+    foreach ( $data as $conv ) {
+        $sql = "select conversationid
+                  from {dialoguegrade_messages}
+                 where conversationid = ?
+                   and grading = ?
+                   and dialogueid = ?";
+        $test = $DB->record_exists_sql($sql, array ($conv->conversationid, $grade->rawgrade, $cm->instance));
+        if ($test) {
+            redirect('conversation.php?id='.$id.'&action=view&conversationid='.$conv->conversationid);
+            return;
+        }
+    }
+
+}
 // In the simplest case just redirect to the view page.
 redirect('view.php?id='.$id);

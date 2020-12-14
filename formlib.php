@@ -194,12 +194,12 @@ class mod_dialoguegrade_message_form extends moodleform {
 
 class mod_dialoguegrade_reply_form extends mod_dialoguegrade_message_form {
     protected function definition() {
-        global $PAGE, $USER; 
-        
+        global $PAGE, $USER;
+
         $mform    = $this->_form;
         $cm       = $PAGE->cm;
         $context  = $PAGE->context;
-        
+
         $mform->addElement('header', 'messagesection', get_string('reply', 'dialoguegrade'));
 
         if (has_capability('mod/dialoguegrade:grading', $context)){
@@ -226,11 +226,11 @@ class mod_dialoguegrade_reply_form extends mod_dialoguegrade_message_form {
                 $mform->setType('maxnote', PARAM_INT);
             }
         }
-        
+
         $mform->setExpanded('messagesection', true);
         parent::definition();
     }
-    
+
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (!empty($data['note'])) {
@@ -284,13 +284,13 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
         $attributes['size'] = 5;
 
         $mform->addElement('selectgroups', 'p_select', get_string('people', 'dialoguegrade'), array(), $attributes);
-        
+
         $mform->addElement('html', '</div>'); // end non-js wrapper
 
         $mform->addElement('header', 'messagesection', get_string('message', 'dialoguegrade'));
-        
+
         $mform->addElement('text', 'subject', get_string('subject', 'dialoguegrade'), array('size'=>'100%'));
-        
+
         $mform->setType('subject', PARAM_TEXT);
 
         $mform->setExpanded('messagesection', true);
@@ -365,22 +365,22 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
                 $errors['participant_autocomplete_field'] = get_string('errornoparticipant', 'dialoguegrade');
             }
         }
-        
+
         //$data['people'][0] contient l'identifiant userid du destinataire
         //mtrace($data['people'] [0]);
         $sql = "select b.conversationid
-                  from {dialoguegrade_participants} a,{dialoguegrade_participants} b 
+                  from {dialoguegrade_participants} a,{dialoguegrade_participants} b
                  where a.dialogueid = ?
                    and a.dialogueid = b.dialogueid
                    and a.userid = ?
                    and b.userid = ?
                    and a.conversationid = b.conversationid";
-        
+
         $doubleConversation = $DB->record_exists_sql($sql, array ($data['dialogueid'], $USER->id, $data['people'][0]));
         if ($doubleConversation) {
             $errors['subject'] = "Une conversation avec ce destinataire existe deja !";
         }
-        
+
         if (empty($data['subject'])) {
             $errors['subject'] = get_string('erroremptysubject', 'dialoguegrade');
         }

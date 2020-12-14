@@ -38,8 +38,8 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
     public function render_conversation(mod_dialoguegrade\conversation $conversation) {
         global $PAGE, $OUTPUT, $USER;
 
-        $context = $conversation->dialogue->context; // fetch context from parent dialogue
-        $cm      = $conversation->dialogue->cm; // fetch course module from parent dialogue
+        $context = $conversation->dialogue->context; // Fetch context from parent dialogue.
+        $cm      = $conversation->dialogue->cm; // Fetch course module from parent dialogue.
 
         $today    = strtotime("today");
         $yearago  = strtotime("-1 year");
@@ -47,9 +47,19 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
         $html = '';
 
         $html .= html_writer::start_div('conversation-heading');
-        $html .= html_writer::tag('h3', $conversation->subject, array('class' => 'heading'));
+        $html .= html_writer::tag('span', $conversation->subject, array('style' => 'font-size: 1.75rem;'));
 
-        $html .= html_writer::end_div(); // close header
+        $html .= html_writer::start_tag('ul', array('class' => "message-actions pull-right"));
+        $html .= html_writer::start_tag('li');
+        $editicon = html_writer::tag('i', '', array('class' => "fa fa-pencil-square-o"));
+        $editurl = new moodle_url('/mod/dialoguegrade/changeconversationparams.php');
+        $editurl->param('id', $cm->id);
+        $editurl->param('conversationid', $conversation->conversationid);
+        $html .= html_writer::link($editurl, $editicon);
+        $html .= html_writer::end_tag('li');
+        $html .= html_writer::end_tag('ul');
+
+        $html .= html_writer::end_div(); // Close header.
 
         $html .= html_writer::start_div('conversation');
         $messageid = 'm' . $conversation->messageid;
@@ -62,7 +72,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('conversation-body');
 
         $datestrings = (object) dialoguegrade_get_humanfriendly_dates($conversation->timemodified);
-        $datestrings->fullname = fullname($conversation->author); //sneaky
+        $datestrings->fullname = fullname($conversation->author);
         if ($conversation->timemodified >= $today) {
             $openedbyheader = get_string('openedbytoday', 'dialoguegrade', $datestrings);
         } else if ($conversation->timemodified >= $yearago) {
@@ -97,8 +107,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
         $html .= $conversation->bodyhtml;
         $html .= $this->render_attachments($conversation->attachments);
         $html .= html_writer::end_div();
-        
-        // This should only display on open and closed conversations @todo - tidy + css
+
         $participants = $conversation->participants;
         if ($participants) {
             $html .= html_writer::start_div('participants');
@@ -110,7 +119,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
             }
             $html .= html_writer::end_div();
         }
-        $html .= html_writer::end_div(); // end of main conversation
+        $html .= html_writer::end_div(); // End of main conversation.
         $html .= html_writer::empty_tag('hr');
 
         return $html;
@@ -178,7 +187,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
                     $badge = '';
                     $unreadcount = $record->unread;
                     if ($unreadcount > 0) {
-                    	$invite = get_string('reply', 'dialoguegrade');
+                        $invite = get_string('reply', 'dialoguegrade');
                         $badgeclass = 'badge label-info';
                         $badge = html_writer::span($unreadcount, $badgeclass, array('title'=> get_string('numberunread', 'dialoguegrade', $unreadcount)));
                     }
@@ -254,9 +263,9 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
     public function render_reply(\mod_dialoguegrade\reply $reply) {
         global $OUTPUT, $USER;
 
-        $context        = $reply->dialogue->context; // fetch context from parent dialogue
-        $cm             = $reply->dialogue->cm; // fetch course module from parent dialogue
-        $conversation   = $reply->conversation; // fetch parent conversation
+        $context        = $reply->dialogue->context; // Fetch context from parent dialogue.
+        $cm             = $reply->dialogue->cm; // Fetch course module from parent dialogue.
+        $conversation   = $reply->conversation; // Fetch parent conversation.
 
         $today    = strtotime("today");
         $yearago  = strtotime("-1 year");
@@ -268,20 +277,20 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
         $html .= html_writer::tag('a', '', array('id' => $messageid));
 
         $avatar = $OUTPUT->user_picture($reply->author, array('size' => true, 'class' => 'userpicture img-rounded'));
-        
+
         $valeurNote = $reply->note;
         $affNote="";
         if (isset($valeurNote)) {
-        	$noteMax = $reply->dialogue->activityrecord->grade;
-        	$affNote = "<div class='grade'>Note<br><center><small>" . $valeurNote . " / " . $noteMax. " </small></center></div>";
+            $noteMax = $reply->dialogue->activityrecord->grade;
+            $affNote = "<div class='grade'>Note<br><center><small>" . $valeurNote . " / " . $noteMax. " </small></center></div>";
         }
         $html .= html_writer::div($avatar .$affNote, 'conversation-object pull-left');
-        
+
 
         $html .= html_writer::start_div('conversation-body');
 
         $datestrings = (object) dialoguegrade_get_humanfriendly_dates($reply->timemodified);
-        $datestrings->fullname = fullname($reply->author); //sneaky
+        $datestrings->fullname = fullname($reply->author);
         if ($reply->timemodified >= $today) {
             $repliedbyheader = get_string('repliedbytoday', 'dialoguegrade', $datestrings);
         } else if ($reply->timemodified >= $yearago) {
@@ -305,17 +314,13 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
     /**
      * Render attachments associated with a message - conversation or reply.
      *
-     * @global type $OUTPUT
      * @param array $attachments
      * @return string
      */
     public function render_attachments(array $attachments) {
-        global $OUTPUT;
-
         $html = '';
 
         if ($attachments) {
-
             $numattachments = count($attachments);
             $attachmentheader = ($numattachments > 1) ? get_string('numberattachments', 'dialoguegrade', $numattachments) :
                                                         get_string('attachment', 'dialoguegrade');
@@ -329,7 +334,8 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
                 $filesize = $file->get_filesize();
                 $mimetype = $file->get_mimetype();
 
-                $viewurl = new moodle_url('/pluginfile.php/' . $contextid . '/mod_dialoguegrade/attachment/' . $itemid . '/' . $filename);
+                $viewurl = new moodle_url('/pluginfile.php/' . $contextid .
+                                            '/mod_dialoguegrade/attachment/' . $itemid . '/' . $filename);
                 $previewurl = clone($viewurl);
                 $previewurl->param('preview', 'thumb');
                 $downloadurl = clone($viewurl);
@@ -340,7 +346,8 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
                     $html .= html_writer::start_tag('tbody');
                     $html .= html_writer::start_tag('tr');
                     $html .= html_writer::start_tag('td');
-                    $html .= html_writer::link($viewurl, html_writer::empty_tag('img', array('src' => $previewurl->out(), 'class' => 'thumbnail', 'alt' => $mimetype)));
+                    $html .= html_writer::link($viewurl, html_writer::empty_tag('img',
+                                array('src' => $previewurl->out(), 'class' => 'thumbnail', 'alt' => $mimetype)));
                     $html .= html_writer::end_tag('td');
                     $html .= html_writer::start_tag('td');
                     $html .= html_writer::tag('b', $filename);
@@ -357,7 +364,10 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
                     $html .= html_writer::start_tag('tbody');
                     $html .= html_writer::start_tag('tr');
                     $html .= html_writer::start_tag('td');
-                    $html .= html_writer::link($downloadurl, html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url(file_mimetype_icon($mimetype)), 'class' => 'icon', 'alt' => $mimetype)));
+                    $html .= html_writer::link($downloadurl, html_writer::empty_tag('img',
+                                array('src' => $this->output->pix_url(file_mimetype_icon($mimetype)),
+                                                                      'class' => 'icon',
+                                                                      'alt' => $mimetype)));
                     $html .= html_writer::end_tag('td');
                     $html .= html_writer::start_tag('td');
                     $html .= html_writer::tag('i', $filename);
@@ -369,23 +379,20 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
                     $html .= html_writer::end_tag('tbody');
                     $html .= html_writer::end_tag('table');
                 }
-                $html .= html_writer::empty_tag('br'); // break up attachments spacing
+                $html .= html_writer::empty_tag('br'); // Break up attachments spacing.
             }
             $html .= html_writer::end_div();
         }
         return $html;
     }
 
-
     public function state_button_group() {
-        global $PAGE;
-
-        $stateurl = clone($PAGE->url);
+        $stateurl = clone($this->page->url);
         $html = '';
         $openlink = '';
         $closedlink = '';
 
-        // get state from url param
+        // Get state from url param.
         $state = $stateurl->get_param('state');
         return $html;
     }
@@ -403,8 +410,6 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
      * @throws moodle_exception
      */
     public function list_sortby($options, $sort, $direction) {
-        global $PAGE, $OUTPUT;
-
         $html = '';
         $nonjsoptions = array();
 
@@ -412,15 +417,14 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
             throw new moodle_exception("Not a sort option");
         }
 
+        $pageurl = clone($this->page->url);
+        $this->page->url->param('page', 0); // Reset pagination.
 
-        $pageurl = clone($PAGE->url);
-        $PAGE->url->param('page', 0); // reset pagination
-
-        $html .= html_writer::start_div('dropdown-group pull-right'); //
+        $html .= html_writer::start_div('dropdown-group pull-right');
         $html .= html_writer::start_div('js-control btn-group pull-right');
 
         $html .= html_writer::start_tag('button', array('data-toggle' => 'dropdown',
-                                                        'class' =>'btn btn-small dropdown-toggle'));
+                                                        'class' => 'btn btn-small dropdown-toggle'));
 
         $html .= get_string('sortedby', 'dialoguegrade', get_string($sort, 'dialoguegrade'));
         $html .= html_writer::end_tag('button');
@@ -429,7 +433,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
             $string = get_string($option, 'dialoguegrade');
             $nonjsoptions[$option] = $string;
             if ($settings['directional'] == false) {
-                $url = clone($PAGE->url);
+                $url = clone($this->page->url);
                 $url->param('sort', $option);
                 $html .= html_writer::start_tag('li');
                 $html .= html_writer::link($url, $string);
@@ -441,10 +445,10 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
             } else {
                 $sortdirection = \core_text::strtolower($settings['default']);
             }
-            $url = clone($PAGE->url);
+            $url = clone($this->page->url);
             $url->param('sort', $option);
             $url->param('direction', $sortdirection);
-            // font awesome icon
+            // Font awesome icon.
             $faclass = "fa fa-sort-{$settings['type']}-{$sortdirection} pull-right";
             $faicon = html_writer::tag('i', '', array('class' => $faclass));
             $html .= html_writer::start_tag('li');
@@ -452,21 +456,20 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('li');
         }
         $html .= html_writer::end_tag('ul');
-        $html .= html_writer::end_div(); // end of js-control
+        $html .= html_writer::end_div(); // End of js-control.
 
         // Important: non javascript control must be after javascript control else layout borked in chrome.
         $select = new single_select($pageurl, 'sort', $nonjsoptions, $sort, null, 'orderbyform');
         $select->method = 'post';
-        $nonjscontrol = $OUTPUT->render($select);
+        $nonjscontrol = $this->output->render($select);
         $html .= html_writer::div($nonjscontrol, 'nonjs-control');
 
-        $html .= html_writer::end_div(); // end of container
+        $html .= html_writer::end_div(); // End of container.
         return $html;
 
     }
 
     public function sort_by_dropdown($options) {
-        global $PAGE, $OUTPUT;
         $html = '';
 
         $strings = array();
@@ -474,20 +477,20 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
             $strings[$option] = get_string($option, 'dialoguegrade');
         }
 
-        $pageurl = clone($PAGE->url);
+        $pageurl = clone($this->page->url);
 
-        $PAGE->url->param('page', 0); // reset pagination
+        $this->page->url->param('page', 0); // Reset pagination.
 
-        $sort = $PAGE->url->get_param('sort');
+        $sort = $this->page->url->get_param('sort');
         if (!in_array($sort, $options)) {
             throw new coding_exception('$PAGE sort param is not in options');
         }
 
-        $html .= html_writer::start_div('dropdown-group pull-right'); //
+        $html .= html_writer::start_div('dropdown-group pull-right');
         $html .= html_writer::start_div('js-control btn-group pull-right');
 
         $html .= html_writer::start_tag('button', array('data-toggle' => 'dropdown',
-                                                        'class' =>'btn btn-small dropdown-toggle'));
+                                                        'class' => 'btn btn-small dropdown-toggle'));
 
         $html .= get_string('sortedby', 'dialoguegrade', get_string($sort, 'dialoguegrade'));
         $html .= html_writer::tag('tag', null, array('class' => 'caret'));
@@ -495,7 +498,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
         $html .= html_writer::start_tag('ul', array('class' => 'dropdown-menu'));
 
         foreach ($options as $option) {
-            $url = clone($PAGE->url);
+            $url = clone($this->page->url);
             $url->param('sort', $option);
             $html .= html_writer::start_tag('li');
             $html .= html_writer::link($url, ucfirst(get_string($option, 'dialoguegrade')));
@@ -503,65 +506,66 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
         }
 
         $html .= html_writer::end_tag('ul');
-        $html .= html_writer::end_div(); // end of js-control
+        $html .= html_writer::end_div(); // End of js-control.
 
         // Important: non javascript control must be after javascript control else layout borked in chrome.
         $select = new single_select($pageurl, 'sort', $strings, $sort, null, 'orderbyform');
         $select->method = 'post';
-        $nonjscontrol = $OUTPUT->render($select);
+        $nonjscontrol = $this->output->render($select);
         $html .= html_writer::div($nonjscontrol, 'nonjs-control');
 
-        $html .= html_writer::end_div(); // end of container
+        $html .= html_writer::end_div(); // End of container.
         return $html;
-
     }
 
     public function tab_navigation(\mod_dialoguegrade\dialogue $dialogue) {
-        global $PAGE, $DB, $USER;
+        global $DB, $USER;
 
         $config  = $dialogue->config;
         $context = $dialogue->context;
         $cm      = $dialogue->cm;
 
         $html = '';
-        $currentpage = basename($PAGE->url->out_omit_querystring(), '.php');
+        $currentpage = basename($this->page->url->out_omit_querystring(), '.php');
 
-        $html .= html_writer::start_tag('ul', array('class'=>'nav nav-tabs'));
-        // link main conversation listing
-        $active = ($currentpage == 'view') ? array('class'=>'active') : array();
+        $html .= html_writer::start_tag('ul', array('class' => 'nav nav-tabs'));
+        // Link main conversation listing.
+        $active = ($currentpage == 'view') ? array('class' => 'active') : array();
         $html .= html_writer::start_tag('li', $active);
-        $viewurl = new moodle_url('view.php', array('id'=>$cm->id));
+        $viewurl = new moodle_url('view.php', array('id' => $cm->id));
         $html .= html_writer::link($viewurl, get_string('viewconversations', 'dialoguegrade'));
         $html .= html_writer::end_tag('li');
-        // experimental: link conversation by role listing
+        // Experimental: link conversation by role listing.
         if (!empty($config->viewconversationsbyrole) and has_capability('mod/dialoguegrade:viewbyrole', $context)) {
-            $active = ($currentpage == 'viewconversationsbyrole') ? array('class'=>'active') : array();
+            $active = ($currentpage == 'viewconversationsbyrole') ? array('class' => 'active') : array();
             $html .= html_writer::start_tag('li', $active);
-            $viewurl = new moodle_url('viewconversationsbyrole.php', array('id'=>$cm->id));
+            $viewurl = new moodle_url('viewconversationsbyrole.php', array('id' => $cm->id));
             $html .= html_writer::link($viewurl, get_string('viewconversationsbyrole', 'dialoguegrade'));
             $html .= html_writer::end_tag('li');
         }
-        // link to users draft listing
-        $active = ($currentpage == 'drafts') ? array('class'=>'active') : array();
+        // Link to users draft listing.
+        $active = ($currentpage == 'drafts') ? array('class' => 'active') : array();
         $html .= html_writer::start_tag('li', $active);
-        $draftsurl = new moodle_url('drafts.php', array('id'=>$cm->id));
+        $draftsurl = new moodle_url('drafts.php', array('id' => $cm->id));
         $html .= html_writer::link($draftsurl, get_string('drafts', 'dialoguegrade'));
         $html .= html_writer::end_tag('li');
- 
-        // open discussion button
+
+        // Open discussion button.
         if (has_capability('mod/dialoguegrade:open', $context)) {
-        	$btnCreate = true;
-        	if (!has_capability('mod/dialoguegrade:multipleconversation', $context)) {
-        		 $sql = "select conversationid 
-				           from {dialoguegrade_participants}
-				          where dialogueid = ?
-				            and userid = ?";
-		         $btnCreate = ! ($DB->record_exists_sql($sql, array ($cm->instance, $USER->id)));
-        	}
-        	if ($btnCreate) {
-                $createurl = new moodle_url('conversation.php', array('id'=>$cm->id, 'action'=>'create'));
-                $html .= html_writer::link($createurl, get_string('create', 'dialoguegrade'), array('class'=>'btn-create pull-right'));//array('class'=>'btn btn-primary pull-right')
-        	}
+            $btncreate = true;
+            if (!has_capability('mod/dialoguegrade:multipleconversation', $context)) {
+                 $sql = "select conversationid
+                           from {dialoguegrade_participants}
+                          where dialogueid = ?
+                            and userid = ?";
+                 $btncreate = ! ($DB->record_exists_sql($sql, array ($cm->instance, $USER->id)));
+            }
+            if ($btncreate) {
+                $createurl = new moodle_url('conversation.php', array('id' => $cm->id, 'action' => 'create'));
+                $html .= html_writer::link($createurl,
+                                            get_string('create', 'dialoguegrade'),
+                                            array('class' => 'btn-create pull-right'));
+            }
         }
         $html .= html_writer::end_tag('ul');
 
