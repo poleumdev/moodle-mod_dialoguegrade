@@ -19,19 +19,18 @@ $string['completionsendgroup'] = 'Message required';
 $string['completionreplies'] = 'The teacher must write answers';
 $string['completionrepliesgroup'] = 'Response required';
 
-
-$string['January']='January';
-$string['February']='February';
-$string['March']='March';
-$string['April']='April';
-$string['May']='May';
-$string['June']='June';
-$string['July']='July';
-$string['August']='August';
-$string['September']='September';
-$string['October']='October';
-$string['November']='November';
-$string['December']='December';
+$string['January'] = 'January';
+$string['February'] = 'February';
+$string['March'] = 'March';
+$string['April'] = 'April';
+$string['May'] = 'May';
+$string['June'] = 'June';
+$string['July'] = 'July';
+$string['August'] = 'August';
+$string['September'] = 'September';
+$string['October'] = 'October';
+$string['November'] = 'November';
+$string['December'] = 'December';
 
 $string['actions'] = 'Actions';
 $string['getto'] = 'Get to';
@@ -93,7 +92,7 @@ $string['draftlistdisplayheader'] = 'Displaying my drafts';
 $string['draftreply'] = 'Draft reply';
 $string['draftreplytrashed'] = 'Draft reply trashed';
 $string['drafts'] = 'Drafts';
-$string['errorcutoffdateinpast'] =  'Cut off date cannot be set in the past';
+$string['errorcutoffdateinpast'] = 'Cut off date cannot be set in the past';
 $string['erroremptymessage'] = 'Message cannot be empty';
 $string['erroremptysubject'] = 'Subject cannot be empty.';
 $string['errornoparticipant'] = 'You must open a Log book with somebody...';
@@ -175,13 +174,13 @@ $string['unreadmessages'] = 'Unread messages';
 $string['unreadmessagesnumber'] = '{$a} unread messages';
 $string['unreadmessagesone'] = '1 unread message';
 $string['usecoursegroups'] = 'Use course groups';
-$string['usecoursegroups_help'] = 'If the course has defined groups a further restriction will be added to who a dialogue can 
+$string['usecoursegroups_help'] = 'If the course has defined groups a further restriction will be added to who a dialogue can
 be opened with. Dialogues can only be opened between group members unless the person opening the dialogue has the "Access all groups"
 capability set.';
 $string['usesearch'] = 'Use search to find people to start a dialogue with';
 $string['viewconversations'] = 'View conversations';
 $string['viewconversationsbyrole'] = 'View conversations by role';
-// DateTime labels
+// DateTime labels.
 $string['year'] = 'year';
 $string['years'] = 'years';
 $string['month'] = 'month';
@@ -197,7 +196,6 @@ $string['minutes'] = 'minutes';
 $string['second'] = 'second';
 $string['seconds'] = 'seconds';
 
-//ajout
 $string['saisienote'] = 'taking into account this note';
 $string['saisienote_help'] = 'the entered note overwrites the previous one';
 $string['dialoguegrade:addinstance'] = 'Create a log book activity';
@@ -214,5 +212,7 @@ $string['dialoguegrade:replyany'] = 'Reply to any log book';
 $string['dialoguegrade:viewany'] = 'Access all log books';
 $string['dialoguegrade:viewbyrole'] = 'View by Role';
 
-// add jjupin march 25, 2019
 $string['dialoguegrade:bepotentialteacher'] = 'To be a potential teacher : students can choose a teacher and open a "carnet de bord"';
+$string['updatedialoguegrade'] = 'Changing the logbook';
+$string['updateok'] = 'Modifications made';
+$string['proofreader'] = 'Teacher';

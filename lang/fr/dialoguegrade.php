@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -30,20 +29,18 @@ $string['completionsendgroup'] = 'Messages requis';
 $string['completionreplies'] = 'L\'enseignant doit écrire des réponses';
 $string['completionrepliesgroup'] = 'Réponses requises';
 
-
-$string['January']='Janvier';
-$string['February']='Février';
-$string['March']='Mars';
-$string['April']='Avril';
-$string['May']='Mai';
-$string['June']='Juin';
-$string['July']='Juillet';
-$string['August']='Aûot';
-$string['September']='Septembre';
-$string['October']='Octobre';
-$string['November']='Novembre';
-$string['December']='Decembre';
-
+$string['January'] = 'Janvier';
+$string['February'] = 'Février';
+$string['March'] = 'Mars';
+$string['April'] = 'Avril';
+$string['May'] = 'Mai';
+$string['June'] = 'Juin';
+$string['July'] = 'Juillet';
+$string['August'] = 'Aûot';
+$string['September'] = 'Septembre';
+$string['October'] = 'Octobre';
+$string['November'] = 'Novembre';
+$string['December'] = 'Decembre';
 
 $string['actions'] = 'Actions';
 $string['getto'] = 'Accéder';
@@ -220,5 +217,8 @@ $string['dialoguegrade:replyany'] = 'Répondre à n\'importe quel carnet de bord
 $string['dialoguegrade:viewany'] = 'Accéder à tous les carnets de bord';
 $string['dialoguegrade:viewbyrole'] = 'Afficher par rôle';
 
-// add jjupin march 25, 2019
 $string['dialoguegrade:bepotentialteacher'] = 'Etre un enseignant potentiel : les étudiants peuvent choisir et ouvrir un "carnet de bord"';
+$string['updatedialoguegrade'] = 'Modifier le carnet de bord';
+$string['updateok'] = 'Modifications réalisées';
+$string['proofreader'] = 'Correcteur';
+
