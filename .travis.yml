@@ -1,64 +1,48 @@
 language: php
 
-notifications:
-  email:
-    recipients:
-      - pole.umdev@gmail.com
+addons:
+  postgresql: "9.6"
 
-sudo: false
+services:
+  - mysql
+  - postgresql
+  - docker
 
 cache:
   directories:
     - $HOME/.composer/cache
-
-addons:
-  postgresql: "9.6"
+    - $HOME/.npm
 
 php:
-  - 7.1
-  - 7.2
-  - 7.3
+ - 7.2
+ - 7.3
+ - 7.4
 
 env:
-  global:
-    - DB=pgsql
-  matrix:
-    - MOODLE_BRANCH=MOODLE_33_STABLE
-    - MOODLE_BRANCH=MOODLE_34_STABLE
-    - MOODLE_BRANCH=MOODLE_35_STABLE
-    - MOODLE_BRANCH=MOODLE_36_STABLE
-    - MOODLE_BRANCH=MOODLE_37_STABLE
-    - MOODLE_BRANCH=MOODLE_38_STABLE
-    - MOODLE_BRANCH=master
-
-matrix:
-  exclude:
-    - php: 7.1
-      env: MOODLE_BRANCH=master
-    - php: 7.2
-      env: MOODLE_BRANCH=MOODLE_33_STABLE
-    - php: 7.3
-      env: MOODLE_BRANCH=MOODLE_33_STABLE
-    - php: 7.3
-      env: MOODLE_BRANCH=MOODLE_34_STABLE
-    - php: 7.3
-      env: MOODLE_BRANCH=MOODLE_35_STABLE
+ global:
+  - MOODLE_BRANCH=MOODLE_39_STABLE
+ matrix:
+  - DB=pgsql
+  - DB=mysqli
 
 before_install:
+  - phpenv config-rm xdebug.ini
   - cd ../..
-  - composer selfupdate
-  - composer create-project -n --no-dev moodlerooms/moodle-plugin-ci ci ^1
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
-  - moodle-plugin-ci install -vvv
+  - moodle-plugin-ci install
 
 script:
   - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
   - moodle-plugin-ci phpmd
   - moodle-plugin-ci codechecker
-  - moodle-plugin-ci csslint
-  - moodle-plugin-ci shifter
-  - moodle-plugin-ci jshint
+  - moodle-plugin-ci validate
+  - moodle-plugin-ci savepoints
+  - moodle-plugin-ci mustache
+  - moodle-plugin-ci grunt
+  - moodle-plugin-ci phpdoc
   - moodle-plugin-ci phpunit
-  - moodle-plugin-ci behat
+  - moodle-plugin-ci behat --dump
