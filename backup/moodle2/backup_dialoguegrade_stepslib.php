@@ -39,47 +39,47 @@ class backup_dialoguegrade_activity_structure_step extends backup_activity_struc
                                                     'name',
                                                     'intro',
                                                     'introformat',
-                                              		'grade',
+                                                    'grade',
                                                     'maxattachments',
                                                     'maxbytes',
-                                              		'completionsend',
-                                              		'completionreplies',
+                                                    'completionsend',
+                                                    'completionreplies',
                                                     'usecoursegroups',
                                                     'notifications',
                                                     'notificationcontent',
                                                     'multipleconversations',
                                                     'timemodified'));
-  
+
         $conversations = new backup_nested_element('conversations');
-        
+
         $conversation = new backup_nested_element('conversation', array('id'),
                                                   array('course',
                                                         'dialogueid',
                                                         'subject'));
-        
+
         $participants = new backup_nested_element('participants');
-        
+
         $participant = new backup_nested_element('participant', array('id'),
                                                   array('dialogueid',
                                                         'conversationid',
                                                         'userid'));
 
         $messages = new backup_nested_element('messages');
-        
+
         $message = new backup_nested_element('message', array('id'),
                                               array('dialogueid',
                                                     'conversationid',
                                                     'conversationindex',
                                                     'authorid',
                                                     'body',
-                                              		'grading',
+                                                    'grading',
                                                     'bodyformat',
                                                     'bodytrust',
                                                     'attachments',
                                                     'state',
                                                     'timecreated',
                                                     'timemodified'));
-        
+
         $flags = new backup_nested_element('flags');
 
         $flag = new backup_nested_element('flag', array('id'),
@@ -93,16 +93,16 @@ class backup_dialoguegrade_activity_structure_step extends backup_activity_struc
         // Build the tree
         $dialogue->add_child($conversations);
         $conversations->add_child($conversation);
-        
+
         $conversation->add_child($participants);
         $participants->add_child($participant);
-        
+
         $conversation->add_child($messages);
         $messages->add_child($message);
 
         $conversation->add_child($flags);
         $flags->add_child($flag);
-        
+
         // Define sources
         $dialogue->set_source_table('dialoguegrade', array('id' => backup::VAR_ACTIVITYID));
         // All these source definitions only happen if we are including user info
@@ -111,19 +111,19 @@ class backup_dialoguegrade_activity_structure_step extends backup_activity_struc
             $participant->set_source_table('dialoguegrade_participants', array('conversationid' => backup::VAR_PARENTID));
             $message->set_source_table('dialoguegrade_messages', array('conversationid' => backup::VAR_PARENTID));
             $flag->set_source_table('dialoguegrade_flags', array('conversationid' => backup::VAR_PARENTID));
-            
+
         }
 
         // Define id annotations
         $participant->annotate_ids('user', 'userid');
         $message->annotate_ids('user', 'authorid');
         $flag->annotate_ids('user', 'userid');
-        
+
         // Define file annotations
         $dialogue->annotate_files('mod_dialoguegrade', 'intro', null); // This file area hasn't itemid
         $message->annotate_files('mod_dialoguegrade', 'message', 'id');
         $message->annotate_files('mod_dialoguegrade', 'attachment', 'id');
-                
+
         // Return the root element, wrapped into standard activity structure
         return $this->prepare_activity_structure($dialogue);
     }

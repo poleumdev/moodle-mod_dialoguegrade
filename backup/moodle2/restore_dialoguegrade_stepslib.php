@@ -31,7 +31,6 @@
 class restore_dialoguegrade_activity_structure_step extends restore_activity_structure_step {
 
     protected function define_structure() {
-
         $paths = array();
         // Main dialogue processor can handle legacy data
         $paths[] = new restore_path_element('dialoguegrade', '/activity/dialoguegrade');
@@ -53,7 +52,7 @@ class restore_dialoguegrade_activity_structure_step extends restore_activity_str
 
                 $paths[] = new restore_path_element('participant',
                                                     '/activity/dialoguegrade/conversations/conversation/participants/participant');
-    
+
                 $paths[] = new restore_path_element('message',
                                                     '/activity/dialoguegrade/conversations/conversation/messages/message');
 
@@ -61,7 +60,7 @@ class restore_dialoguegrade_activity_structure_step extends restore_activity_str
                                                     '/activity/dialoguegrade/conversations/conversation/flags/flag');
             }
         }
-        
+
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
     }
@@ -73,7 +72,7 @@ class restore_dialoguegrade_activity_structure_step extends restore_activity_str
 
         $data = (object)$data;
         $oldid = $data->id;
-        
+
         $data->course = $this->get_courseid();
         $data->maxattachments = $pluginconfig->maxattachments;
         $data->maxbytes = $pluginconfig->maxbytes;
@@ -83,7 +82,7 @@ class restore_dialoguegrade_activity_structure_step extends restore_activity_str
 
         // unsure if should be using mapping like this
         // $this->set_mapping('dialogue_var_type', $oldid, $data->dialoguetype);
-        
+
     }
 
 
@@ -106,7 +105,7 @@ class restore_dialoguegrade_activity_structure_step extends restore_activity_str
 
         $data = (object)$data;
         $oldid = $data->id;
-        
+
         $data->course = $this->get_courseid();
         $data->dialogueid = $this->get_new_parentid('dialoguegrade');
 
@@ -144,7 +143,7 @@ class restore_dialoguegrade_activity_structure_step extends restore_activity_str
         $data->conversationindex = 0; // will need fixing, can only do after execute
         $data->authorid = $this->get_mappingid('user', $data->userid);
         $data->body = $data->text;
-       // $data->grading = 
+       // $data->grading =
         $data->bodyformat = $data->format;
         $data->bodytrust = $data->trust;
         $data->attachments = $data->attachment;
@@ -167,19 +166,19 @@ class restore_dialoguegrade_activity_structure_step extends restore_activity_str
             $recipient->userid = $data->recipientid; // old recipientid
             $this->process_participant($recipient);
         }
-        
+
     }
-    
+
     protected function process_message($data) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
-        
+
         $data->dialogueid = $this->get_new_parentid('dialoguegrade');
         $data->conversationid = $this->get_mappingid('dialoguegrade_conversation', $data->conversationid);
         $data->authorid = $this->get_mappingid('user', $data->authorid);
-        
+
         $newitemid = $DB->insert_record('dialoguegrade_messages', $data);
         $this->set_mapping('dialoguegrade_message', $oldid, $newitemid, true);
 
@@ -190,12 +189,12 @@ class restore_dialoguegrade_activity_structure_step extends restore_activity_str
         global $DB;
 
         $data = (object)$data;
-        
+
         $data->dialogueid = $this->get_new_parentid('dialoguegrade');
         $data->conversationid = $this->get_mappingid('dialoguegrade_conversation', $data->conversationid);
         $data->messageid = $this->get_mappingid('dialoguegrade_message', $data->messageid);
         $data->userid = $this->get_mappingid('user', $data->userid);
-        
+
         $newitemid = $DB->insert_record('dialoguegrade_flags', $data);
     }
 
@@ -264,7 +263,7 @@ class restore_dialoguegrade_activity_structure_step extends restore_activity_str
                        AND filearea  = ?";
 
         $params = array($restoreid, $oldcontextid, $component, $filearea);
-        
+
         $fs = get_file_storage();                      // Get moodle file storage
         $basepath = $this->get_basepath() . '/files/'; // Get backup file pool base
         $rs = $DB->get_recordset_sql($sql, $params);
