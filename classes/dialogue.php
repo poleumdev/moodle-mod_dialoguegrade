@@ -103,7 +103,7 @@ class dialogue {
      * @return array
      */
     public static function get_unread_states() {
-        return array(dialogue::STATE_OPEN, dialogue::STATE_CLOSED);
+        return array(self::STATE_OPEN, self::STATE_CLOSED);
     }
 
     /**
@@ -138,13 +138,13 @@ class dialogue {
     protected function load_activity_record() {
         global $DB;
 
-        $this->_module = $DB->get_record($this->_cm->modname, array('id'=>$this->_cm->instance), '*', MUST_EXIST);
+        $this->_module = $DB->get_record($this->_cm->modname, array('id' => $this->_cm->instance), '*', MUST_EXIST);
     }
 
     protected function load_course() {
         global $DB;
 
-        $this->_course = $DB->get_record('course', array('id'=>$this->_cm->course), '*', MUST_EXIST);
+        $this->_course = $DB->get_record('course', array('id' => $this->_cm->course), '*', MUST_EXIST);
     }
 
     protected function magic_get_config() {
@@ -183,12 +183,12 @@ class dialogue {
         }
         return $this->_module->id;
     }
-    //ajout pour note
+    // Ajout pour note.
     protected function magic_get_module() {
-    	if (is_null($this->_module)) {
-    		$this->load_activity_record();
-    	}
-    	return $this->_module;
+        if (is_null($this->_module)) {
+            $this->load_activity_record();
+        }
+        return $this->_module;
     }
 
     protected function set_activity_record($module) {
@@ -196,7 +196,8 @@ class dialogue {
             $this->load_course();
         }
         if ($module->id != $this->_cm->instance || $module->course != $this->_course->id) {
-            throw new coding_exception('The activity record you are trying to set does not seem to correspond to the cm that has been set.');
+            throw new coding_exception('The activity record you are trying to set does not seem to correspond to the cm
+                                        that has been set.');
         }
         $this->_module = $module;
     }

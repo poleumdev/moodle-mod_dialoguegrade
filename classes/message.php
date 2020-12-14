@@ -17,7 +17,6 @@
 namespace mod_dialoguegrade;
 defined('MOODLE_INTERNAL') || die();
 
-
 class message implements \renderable {
 
     protected $_dialogue = null;
@@ -129,7 +128,7 @@ class message implements \renderable {
     }
 
     protected function magic_get_note() {
-    	return $this->_note;
+        return $this->_note;
     }
     
     protected function magic_get_conversation() {
@@ -315,17 +314,16 @@ class message implements \renderable {
 
         //enregistrer la note dans le carnet de note.
         if (isset($this->_note) && $this->_note != null) {
-        	$targetid = -1; //rechercher le user cible
-        	$participants = $this->conversation->participants;
-        	foreach ($participants as $participant) {
-        		if ($participant->id != $this->_authorid) {
-        			$targetid = $participant->id;
-        			dialoguegrade_update_grades($this->conversation, $targetid);
-        		}
-        	}
+            $targetid = -1; //rechercher le user cible
+            $participants = $this->conversation->participants;
+            foreach ($participants as $participant) {
+                if ($participant->id != $this->_authorid) {
+                    $targetid = $participant->id;
+                    dialoguegrade_update_grades($this->conversation, $targetid);
+                }
+            }
         }
-        
-        
+
         // setup information for messageapi object
         $cm = $this->dialogue->cm;
         $conversationid = $this->conversation->conversationid;

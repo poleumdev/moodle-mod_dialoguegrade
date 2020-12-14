@@ -18,7 +18,7 @@ namespace mod_dialoguegrade;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once __DIR__ . '/../../../lib/filelib.php';
+require_once(__DIR__ . '/../../../lib/filelib.php');
 
 class conversation extends message {
 
@@ -59,7 +59,7 @@ class conversation extends message {
     public function clear_participants() {
         return $this->_participants = null;
     }
-    
+
 
     /**
      * Sets up a new conversation based on current conversation and dialogue, and
@@ -70,7 +70,6 @@ class conversation extends message {
      *  -   body
      *  -   attachments
      *  -   state
-     *
      * any associated files are moved to draft area
      *
      * @return conversation
@@ -148,23 +147,23 @@ class conversation extends message {
         if (!$candelete) {
             throw new \moodle_exception('nopermissiontodelete', 'dialoguegrade');
         }
-        
+
         //suppression dans carnet note
         $participants = $this->__get("participants");
         $userid = -1;
         $nb = 0;
         foreach ($participants as $participant) {
-        	if ($participant->id != $USER->id) {
-        		$userid = $participant->id;
-        		$nb++;
-        	}
+            if ($participant->id != $USER->id) {
+                $userid = $participant->id;
+                $nb++;
+            }
         }
         if ($nb == 1) { //un seul destinataire en relation avec l'enseignant (USER)
-        	$dialogue = $this->__get("dialogue");
-        	$dialogueBDD = $dialogue->__get("module");
-        	dialoguegrade_grade_item_delete_user($dialogueBDD, $userid,  $this->_conversationid);
+            $dialogue = $this->__get("dialogue");
+            $dialogueBDD = $dialogue->__get("module");
+            dialoguegrade_grade_item_delete_user($dialogueBDD, $userid,  $this->_conversationid);
         }
-        
+
         // delete flags
         $DB->delete_records('dialoguegrade_flags', array('conversationid' => $this->_conversationid));
         // delete participants
@@ -279,8 +278,8 @@ class conversation extends message {
         $json = json_encode($participants);
 
         $PAGE->requires->yui_module('moodle-mod_dialoguegrade-autocomplete',
-        	  'M.mod_dialoguegrade.autocomplete.init', array($cm->id, $json));
-        		
+              'M.mod_dialoguegrade.autocomplete.init', array($cm->id, $json));
+
        //     'M.mod_dialogue.autocomplete.init', array($cm->id, $json));
 
         $form->update_selectgroup('p_select', $optiongroup, $selected);
