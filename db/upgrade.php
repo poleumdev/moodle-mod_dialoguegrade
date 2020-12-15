@@ -16,12 +16,7 @@
 
 function xmldb_dialoguegrade_upgrade($oldversion=0) {
     global $CFG, $DB, $OUTPUT;
-
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
-
-    /**
-     * Moodle v2.8.0 release upgrade line.
-     */
 
     return true;
 }

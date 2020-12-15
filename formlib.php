@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-// load repository lib, will load filelib and formslib
+// Load repository lib, will load filelib and formslib.
 require_once($CFG->dirroot . '/repository/lib.php');
 
 class mod_dialoguegrade_message_form extends moodleform {
@@ -39,8 +39,10 @@ class mod_dialoguegrade_message_form extends moodleform {
         $mform->addElement('editor', 'body', get_string('message', 'dialoguegrade'), null, self::editor_options());
         $mform->setType('body', PARAM_RAW);
 
-        if (!get_config('dialoguegrade', 'maxattachments') or !empty($PAGE->activityrecord->maxattachments))  {  //  0 = No attachments at all
-            $mform->addElement('filemanager', 'attachments[itemid]', get_string('attachments', 'dialoguegrade'), null, self::attachment_options());
+        if (!get_config('dialoguegrade', 'maxattachments') or !empty($PAGE->activityrecord->maxattachments))  {
+            //  0 = No attachments at all !
+            $mform->addElement('filemanager', 'attachments[itemid]', get_string('attachments', 'dialoguegrade'),
+                                null, self::attachment_options());
         }
 
         $mform->addElement('hidden', 'action');
@@ -237,7 +239,6 @@ class mod_dialoguegrade_reply_form extends mod_dialoguegrade_message_form {
             $noteMax = intval($data['maxnote']);
             $noteSaisie = intval($data['note']);
             if ($noteSaisie > $noteMax) {
-                //XXX a reporter dans /lang/en
                 $errors['note'] = "Depassement de la note maximale !";
             }
         }
@@ -255,24 +256,27 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
 
         $mform->addElement('header', 'openwithsection', get_string('openwith', 'dialoguegrade'));
 
-        /** autocomplete javascript **/
+        // Autocomplete javascript.
         $html = '';
-        $html .= html_writer::start_tag('div', array('class'=>'fitem fitem_ftext'));
-        $html .= html_writer::start_tag('div', array( 'class'=>'fitemtitle'));
-        $html .= html_writer::tag('label', get_string('people', 'dialoguegrade'), array('for'=>'people_autocomplete_input'));
+        $html .= html_writer::start_tag('div', array('class' => 'fitem fitem_ftext'));
+        $html .= html_writer::start_tag('div', array( 'class' => 'fitemtitle'));
+        $html .= html_writer::tag('label', get_string('people', 'dialoguegrade'), array('for' => 'people_autocomplete_input'));
         $html .= html_writer::end_tag('div');
-        $html .= html_writer::start_tag('div', array('class'=>'felement ftext'));
-        $html .= html_writer::start_tag('div', array('id'=>'participant_autocomplete_field', 'class' => 'js-control yui3-aclist-field'));
-        $html .= html_writer::tag('input', '', array('id'=>'participant_autocomplete_input', 'class' => 'input-xxlarge', 'placeholder' => get_string('searchpotentials', 'dialoguegrade')));
-        $html .= html_writer::tag('span', '', array('class'=>'drop-down-arrow'));
+        $html .= html_writer::start_tag('div', array('class' => 'felement ftext'));
+        $html .= html_writer::start_tag('div', array('id' => 'participant_autocomplete_field',
+                                                    'class' => 'js-control yui3-aclist-field'));
+        $html .= html_writer::tag('input', '', array('id' => 'participant_autocomplete_input',
+                                                    'class' => 'input-xxlarge',
+                                                    'placeholder' => get_string('searchpotentials', 'dialoguegrade')));
+        $html .= html_writer::tag('span', '', array('class' => 'drop-down-arrow'));
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('div');
-        // add to form
+        // Add to form.
         $mform->addElement('html', $html);
-        /** non javascript **/
-        $mform->addElement('html', '<div class="nonjs-control">'); // non-js wrapper
-        $mform->addElement('text', 'p_query'); //'Person search'
+
+        $mform->addElement('html', '<div class="nonjs-control">'); // Non-js wrapper.
+        $mform->addElement('text', 'p_query'); // Person search.
         $mform->setType('p_query', PARAM_RAW);
         $psearchbuttongroup = array();
         $psearchbuttongroup[] = $mform->createElement('submit', 'p_search', get_string('search'));
@@ -285,7 +289,7 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
 
         $mform->addElement('selectgroups', 'p_select', get_string('people', 'dialoguegrade'), array(), $attributes);
 
-        $mform->addElement('html', '</div>'); // end non-js wrapper
+        $mform->addElement('html', '</div>'); // End non-js wrapper.
 
         $mform->addElement('header', 'messagesection', get_string('message', 'dialoguegrade'));
 
@@ -347,7 +351,7 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
         global $USER, $DB;
         $errors = parent::validation($data, $files);
         if (optional_param_array('p', array(), PARAM_INT)) {
-            // js people search
+            // JS people search.
             $people = optional_param_array('p', array(), PARAM_INT);
             if (isset($people['clear'])) {
                 $data['people'] = array();
@@ -355,7 +359,7 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
                 $data['people'] = $people;
             }
         } else if (optional_param('p_select', array(), PARAM_INT)) {
-            // nonjs people search select
+            // NonJS people search select.
             $data['people'] = optional_param('p_select', array(), PARAM_INT);
         } else {
             $data['people'] = array();
@@ -366,8 +370,6 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
             }
         }
 
-        //$data['people'][0] contient l'identifiant userid du destinataire
-        //mtrace($data['people'] [0]);
         $sql = "select b.conversationid
                   from {dialoguegrade_participants} a,{dialoguegrade_participants} b
                  where a.dialogueid = ?
@@ -376,8 +378,8 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
                    and b.userid = ?
                    and a.conversationid = b.conversationid";
 
-        $doubleConversation = $DB->record_exists_sql($sql, array ($data['dialogueid'], $USER->id, $data['people'][0]));
-        if ($doubleConversation) {
+        $doubleconversation = $DB->record_exists_sql($sql, array ($data['dialogueid'], $USER->id, $data['people'][0]));
+        if ($doubleconversation) {
             $errors['subject'] = "Une conversation avec ce destinataire existe deja !";
         }
 
@@ -393,7 +395,7 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
         return $errors;
     }
 
-    // Get everything we need
+    // Get everything we need.
     public function get_submitted_data() {
         $mform   = $this->_form;
         $data = parent::get_submitted_data();
@@ -403,7 +405,7 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
         unset($data->groupinformation);
 
         if (optional_param_array('p', array(), PARAM_INT)) {
-            // js people search
+            // JS people search.
             $people = optional_param_array('p', array(), PARAM_INT);
             if (isset($people['clear'])) {
                 $data->people = array();
@@ -411,7 +413,7 @@ class mod_dialoguegrade_conversation_form extends mod_dialoguegrade_message_form
                 $data->people = $people;
             }
         } else if (optional_param('p_select', array(), PARAM_INT)) {
-            // nonjs people search select
+            // NonJS people search select.
             $data->people = optional_param('p_select', array(), PARAM_INT);
         } else {
             $data->people = array();

@@ -124,21 +124,15 @@ class conversations_by_author extends conversations {
 
     public function records() {
         global $DB;
-
         $records = array();
-
         $this->setup();
-
         $fields = implode(",\n", $this->fields);
-
         $select = "SELECT $fields $this->basesql $this->orderbysql";
-
         $offset = $this->page * $this->limit;
-
         $recordset = $DB->get_recordset_sql($select, $this->params, $offset, $this->limit);
 
         if ($recordset->valid()) {
-            foreach($recordset as $record) {
+            foreach ($recordset as $record) {
                 $records[] = $record;
             }
         }

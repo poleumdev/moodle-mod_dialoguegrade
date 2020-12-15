@@ -75,30 +75,31 @@ class conversation extends message {
      * @return conversation
      */
     public function copy() {
-        // create new conversation,
+        // Create new conversation.
         $copy = new conversation($this->dialogue);
         $copy->set_author($this->_authorid);
         $copy->set_subject($this->_subject);
-        // prep html linked embedded if html, move to draft area
+        // Prep html linked embedded if html, move to draft area.
         if ($this->bodyformat == FORMAT_HTML) {
-            // html
+            // HTML.
             $context = $this->dialogue->context;
-            $body = \file_prepare_draft_area($copy->_bodydraftid, $context->id, 'mod_dialoguegrade', 'message', $this->messageid, null, $this->body);
+            $body = \file_prepare_draft_area($copy->_bodydraftid, $context->id, 'mod_dialoguegrade', 'message',
+                                            $this->messageid, null, $this->body);
         } else {
-            // plaintext
+            // Plaintext.
             $body = $this->body;
         }
-        // set the body up on the conversation
+        // Set the body up on the conversation.
         $copy->set_body($body, $this->bodyformat);
-        // prep attachments, move to draft area
+        // Prep attachments, move to draft area.
         if ($this->attachments) {
             $copy->_attachments = true;
             $context = $this->dialogue->context;
             \file_prepare_draft_area($copy->_attachmentsdraftid, $context->id, 'mod_dialoguegrade', 'attachment', $this->messageid);
         }
-        // must set state to draft as a copy
+        // Must set state to draft as a copy.
         $copy->set_state(dialogue::STATE_DRAFT);
-        // return copied conversation
+        // Return copied conversation.
         return $copy;
     }
 
@@ -109,11 +110,11 @@ class conversation extends message {
         $cm      = $this->dialogue->cm;
         $course  = $this->dialogue->course;
 
-        // is this a draft
+        // Is this a draft.
         if (is_null($this->_conversationid)) {
             throw new \moodle_exception('cannotclosedraftconversation', 'dialoguegrade');
         }
-        // permission check
+        // Permission check.
         $canclose = (($this->_authorid == $USER->id) or has_capability('mod/dialoguegrade:closeany', $context));
         if (!$canclose) {
             throw new \moodle_exception('nopermissiontoclose', 'dialoguegrade');
@@ -123,7 +124,7 @@ class conversation extends message {
         $closedstate = dialogue::STATE_CLOSED;
         $params = array('conversationid' => $this->conversationid, 'state' => $openstate);
 
-        // close all messages in conversation that have a open state, we don't worry about drafts etc
+        // Close all messages in conversation that have a open state, we don't worry about drafts etc.
         $DB->set_field('dialoguegrade_messages', 'state', $closedstate, $params);
 
         return true;
@@ -136,11 +137,11 @@ class conversation extends message {
         $course  = $this->dialogue->course;
         $context = $this->dialogue->context;
 
-        // hasn't been saved yet
+        // Hasn't been saved yet.
         if (is_null($this->_conversationid)) {
             return true;
         }
-        // permission to delete conversation
+        // Permission to delete conversation.
         $candelete = ((has_capability('mod/dialoguegrade:delete', $context) and $USER->id == $this->_authorid) or
             has_capability('mod/dialoguegrade:deleteany', $context));
 
@@ -148,7 +149,7 @@ class conversation extends message {
             throw new \moodle_exception('nopermissiontodelete', 'dialoguegrade');
         }
 
-        //suppression dans carnet note
+        // Suppression dans carnet note.
         $participants = $this->__get("participants");
         $userid = -1;
         $nb = 0;
@@ -158,22 +159,21 @@ class conversation extends message {
                 $nb++;
             }
         }
-        if ($nb == 1) { //un seul destinataire en relation avec l'enseignant (USER)
+        if ($nb == 1) { // Un seul destinataire en relation avec l'enseignant (USER).
             $dialogue = $this->__get("dialogue");
-            $dialogueBDD = $dialogue->__get("module");
-            dialoguegrade_grade_item_delete_user($dialogueBDD, $userid,  $this->_conversationid);
+            $dialoguebdd = $dialogue->__get("module");
+            dialoguegrade_grade_item_delete_user($dialoguebdd, $userid,  $this->_conversationid);
         }
 
-        // delete flags
+        // Delete flags.
         $DB->delete_records('dialoguegrade_flags', array('conversationid' => $this->_conversationid));
-        // delete participants
+        // Delete participants.
         $DB->delete_records('dialoguegrade_participants', array('conversationid' => $this->_conversationid));
-        // delete replies
+        // Delete replies.
         foreach ($this->replies() as $reply) {
-            // delete reply
             $reply->delete();
         }
-        // delete conversation
+        // Delete conversation.
         $DB->delete_records('dialoguegrade_conversations', array('id' => $this->_conversationid));
 
         parent::delete();
@@ -214,14 +214,13 @@ class conversation extends message {
     protected function load_participants() {
         global $DB;
 
-        $this->_participants = array(); // clear participants array if previous loaded
+        $this->_participants = array(); // Clear participants array if previous loaded.
         $dialogue = $this->dialogue;
 
         $params = array('conversationid' => $this->_conversationid);
         $records = $DB->get_records('dialoguegrade_participants', $params);
         foreach ($records as $record) {
-            // key up on userid and fetch brief details from cache as value (cut down user record)
-            //$this->_participants[$record->userid] = $dialogue->get_user_brief_details($record->userid);
+            // Key up on userid and fetch brief details from cache as value (cut down user record).
             $this->_participants[$record->userid] = dialoguegrade_get_user_details($dialogue, $record->userid);
         }
         return $this->_participants;
@@ -237,7 +236,7 @@ class conversation extends message {
         global $CFG, $USER, $PAGE;
         require_once($CFG->dirroot . '/mod/dialoguegrade/formlib.php');
 
-        // form can only be initialise if in draft state
+        // Form can only be initialise if in draft state.
         if ($this->state != dialogue::STATE_DRAFT) {
             throw new \moodle_exception('Oh! Ah, yes... I see that you know your judo well...');
         }
@@ -249,7 +248,7 @@ class conversation extends message {
         require_capability('mod/dialoguegrade:open', $context);
 
         $form = new \mod_dialoguegrade_conversation_form();
-        // setup important hiddens
+        // Setup important hiddens.
         $form->set_data(array('id' => $cm->id));
         $form->set_data(array('cmid' => $cm->id));
         $form->set_data(array('dialogueid' => $dialogueid));
@@ -260,19 +259,18 @@ class conversation extends message {
         } else {
             $form->set_data(array('action' => 'edit'));
         }
-        // setup nonjs person selector
         $options = array();
         $selected = array();
-        // get participants - @todo
-        $participants = $this->participants; // insure loaded by using magic
+
+        $participants = $this->participants; // Insure loaded by using magic.
         if ($participants) {
             foreach ($participants as $participant) {
                 $options[$participant->id] = fullname($participant);
                 $selected[] = $participant->id;
             }
-            $optiongroup = array('' => $options); // cause formslib selectgroup is stupid.
+            $optiongroup = array('' => $options); // Cause formslib selectgroup is stupid.
         } else {
-            $optiongroup = array(get_string('usesearch', 'dialoguegrade') => array('' => '')); // cause formslib selectgroup is stupid.
+            $optiongroup = array(get_string('usesearch', 'dialoguegrade') => array('' => ''));
         }
 
         $json = json_encode($participants);
@@ -280,31 +278,32 @@ class conversation extends message {
         $PAGE->requires->yui_module('moodle-mod_dialoguegrade-autocomplete',
               'M.mod_dialoguegrade.autocomplete.init', array($cm->id, $json));
 
-       //     'M.mod_dialogue.autocomplete.init', array($cm->id, $json));
-
         $form->update_selectgroup('p_select', $optiongroup, $selected);
 
-        // set subject
+        // Set subject.
         $form->set_data(array('subject' => $this->_subject));
-        // prep draft body
-        $draftbody = \file_prepare_draft_area($this->_bodydraftid, $context->id, 'mod_dialoguegrade', 'message', $this->_messageid, \mod_dialoguegrade_conversation_form::editor_options(), $this->_body);
-        // set body
+        // Prep draft body.
+        $draftbody = \file_prepare_draft_area($this->_bodydraftid, $context->id, 'mod_dialoguegrade',
+                                            'message', $this->_messageid, \mod_dialoguegrade_conversation_form::editor_options(),
+                                            $this->_body);
+        // Set body.
         $form->set_data(array('body' =>
             array('text' => $draftbody,
                 'format' => $this->_bodyformat,
                 'itemid' => $this->_bodydraftid)));
 
-        // prep draft attachments
-        \file_prepare_draft_area($this->_attachmentsdraftid, $context->id, 'mod_dialoguegrade', 'attachment', $this->_messageid, \mod_dialoguegrade_conversation_form::attachment_options());
-        // set attachments
+        // Prep draft attachments.
+        \file_prepare_draft_area($this->_attachmentsdraftid, $context->id, 'mod_dialoguegrade',
+                                'attachment', $this->_messageid, \mod_dialoguegrade_conversation_form::attachment_options());
+        // Set attachments.
         $form->set_data(array('attachments[itemid]' => $this->_attachmentsdraftid));
 
-        // remove any unecessary buttons
+        // Remove any unecessary buttons.
         if (($USER->id != $this->author->id) or is_null($this->conversationid)) {
             $form->remove_from_group('trash', 'actionbuttongroup');
         }
 
-        // attach initialised form to conversation class and return
+        // Attach initialised form to conversation class and return.
         return $this->_form = $form;
     }
 
@@ -356,7 +355,7 @@ class conversation extends message {
         global $DB;
 
         if (empty($this->_replies)) {
-            // only all replies in an open or close state, a reply should never be automated
+            // Only all replies in an open or close state, a reply should never be automated
             // and drafts are no in the line of published conversation.
             $items = array(dialogue::STATE_OPEN, dialogue::STATE_CLOSED);
 
@@ -390,7 +389,7 @@ class conversation extends message {
     public function save() {
         global $DB, $USER;
 
-        $admin = get_admin(); // possible cronjob
+        $admin = get_admin(); // Possible cronjob.
         if ($USER->id != $admin->id and $USER->id != $this->_authorid) {
             throw new \moodle_exception("This conversation doesn't belong to you!");
         }
@@ -398,37 +397,37 @@ class conversation extends message {
         $course = $this->dialogue->course;
         $dialogueid = $this->dialogue->dialogueid;
 
-        // conversation record
+        // Conversation record.
         $record = new \stdClass();
         $record->id = $this->_conversationid;
         $record->course = $course->id;
         $record->dialogueid = $dialogueid;
         $record->subject = $this->_subject;
 
-        // we need a conversationid
+        // We need a conversationid.
         if (is_null($this->_conversationid)) {
-            // create new record
+            // Create new record.
             $this->_conversationid = $DB->insert_record('dialoguegrade_conversations', $record);
         } else {
             $record->timemodified = time();
-            // update existing record
+            // Update existing record.
             $DB->update_record('dialoguegrade_conversations', $record);
         }
 
         $this->save_participants();
 
-        // now let dialogue_message do it's thing
+        // Now let dialogue_message do it's thing.
         parent::save();
     }
 
     public function save_form_data() {
-        // incoming form data
+        // Incoming form data.
         $data = $this->_form->get_submitted_data();
 
-        // shortcut set of participants for now @todo - make better
+        // Shortcut set of participants for now @todo - make better.
         $this->clear_participants();
         if (!empty($data->people)) {
-            $participants = (array) $data->people; // may be single value
+            $participants = (array) $data->people; // May be single value.
             foreach ($participants as $userid) {
                 $this->add_participant($userid);
             }
@@ -444,7 +443,6 @@ class conversation extends message {
         $this->_formdatasaved = true;
     }
 
-// @todo tidy up handle removes
     protected function save_participants() {
         global $DB;
 
@@ -470,7 +468,7 @@ class conversation extends message {
         } else {
             $DB->delete_records('dialoguegrade_participants', array('conversationid' => $conversationid));
         }
-        // refresh
+        // Refresh.
         $this->load_participants();
     }
 

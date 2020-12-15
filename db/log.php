@@ -17,17 +17,21 @@
 defined('MOODLE_INTERNAL') || die();
 
 $logs = array(
-    // dialogue instance log actions
-    array('module'=>'dialoguegrade', 'action'=>'add'         , 'mtable'=>'dialoguegrade', 'field'=>'name'),
-    array('module'=>'dialoguegrade', 'action'=>'update'      , 'mtable'=>'dialoguegrade', 'field'=>'name'),
-    array('module'=>'dialoguegrade', 'action'=>'view'        , 'mtable'=>'dialoguegrade', 'field'=>'name'),
-    array('module'=>'dialoguegrade', 'action'=>'view by role', 'mtable'=>'dialoguegrade', 'field'=>'name'),
-    array('module'=>'dialoguegrade', 'action'=>'view all'    , 'mtable'=>'dialoguegrade', 'field'=>'name'),
-    // conversation log actions
-    array('module'=>'dialoguegrade', 'action'=>'close conversation', 'mtable'=>'dialoguegrade_conversations', 'field'=>'subject'),
-    array('module'=>'dialoguegrade', 'action'=>'delete conversation', 'mtable'=>'dialoguegrade_conversations', 'field'=>'subject'),
-    array('module'=>'dialoguegrade', 'action'=>'open conversation', 'mtable'=>'dialoguegrade_conversations', 'field'=>'subject'),
-    array('module'=>'dialoguegrade', 'action'=>'view conversation', 'mtable'=>'dialoguegrade_conversations', 'field'=>'subject'),
-    // reply log actions
-    array('module'=>'dialoguegrade', 'action'=>'reply', 'mtable'=>'dialoguegrade_conversations', 'field'=>'subject'),
+    // Dialogue instance log actions.
+    array('module' => 'dialoguegrade', 'action' => 'add'         , 'mtable' => 'dialoguegrade', 'field' => 'name'),
+    array('module' => 'dialoguegrade', 'action' => 'update'      , 'mtable' => 'dialoguegrade', 'field' => 'name'),
+    array('module' => 'dialoguegrade', 'action' => 'view'        , 'mtable' => 'dialoguegrade', 'field' => 'name'),
+    array('module' => 'dialoguegrade', 'action' => 'view by role', 'mtable' => 'dialoguegrade', 'field' => 'name'),
+    array('module' => 'dialoguegrade', 'action' => 'view all'    , 'mtable' => 'dialoguegrade', 'field' => 'name'),
+    // Conversation log actions.
+    array('module' => 'dialoguegrade', 'action' => 'close conversation',
+          'mtable' => 'dialoguegrade_conversations', 'field' => 'subject'),
+    array('module' => 'dialoguegrade', 'action' => 'delete conversation',
+          'mtable' => 'dialoguegrade_conversations', 'field' => 'subject'),
+    array('module' => 'dialoguegrade', 'action' => 'open conversation',
+          'mtable' => 'dialoguegrade_conversations', 'field' => 'subject'),
+    array('module' => 'dialoguegrade', 'action' => 'view conversation',
+          'mtable' => 'dialoguegrade_conversations', 'field' => 'subject'),
+    // Reply log actions.
+    array('module' => 'dialoguegrade', 'action' => 'reply', 'mtable' => 'dialoguegrade_conversations', 'field' => 'subject'),
 );

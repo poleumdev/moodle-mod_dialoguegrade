@@ -23,7 +23,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020121406;
+$plugin->version   = 2020121503;
 $plugin->requires  = 2016111500;                // See http://docs.moodle.org/dev/Moodle_Versions
 $plugin->component = 'mod_dialoguegrade';       // Full name of the plugin (used for diagnostics)
 $plugin->release   = '1.1.0 (clone of dialogue)';// Ajout reset cours.
