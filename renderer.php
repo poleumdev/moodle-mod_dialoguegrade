@@ -29,14 +29,12 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
     /**
      * Render conversation, just the conversation
      *
-     * @global type $PAGE
-     * @global type $OUTPUT
      * @global type $USER
      * @param dialogue_conversation $conversation
      * @return string
      */
     public function render_conversation(mod_dialoguegrade\conversation $conversation) {
-        global $PAGE, $OUTPUT, $USER;
+        global $USER;
 
         $context = $conversation->dialogue->context; // Fetch context from parent dialogue.
         $cm      = $conversation->dialogue->cm; // Fetch course module from parent dialogue.
@@ -65,7 +63,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
         $messageid = 'm' . $conversation->messageid;
 
         $html .= html_writer::tag('a', '', array('id' => $messageid));
-        $avatar = $OUTPUT->user_picture($conversation->author, array('size' => true, 'class' => 'userpicture img-rounded'));
+        $avatar = $this->output->user_picture($conversation->author, array('size' => true, 'class' => 'userpicture img-rounded'));
 
         $html .= html_writer::div($avatar, 'conversation-object pull-left');
 
@@ -114,7 +112,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
             $html .= html_writer::tag('strong', count($participants));
             $html .= '&nbsp;' . get_string('participants', 'dialoguegrade');
             foreach ($participants as $participant) {
-                $picture = $OUTPUT->user_picture($participant, array('class' => 'userpicture img-rounded', 'size' => 20));
+                $picture = $this->output->user_picture($participant, array('class' => 'userpicture img-rounded', 'size' => 20));
                 $html .= html_writer::tag('span', $picture . '&nbsp;' . fullname($participant), array('class' => 'participant'));
             }
             $html .= html_writer::end_div();
@@ -128,13 +126,10 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
     /**
      * Render a list of conversations in a dialogue for a particular user.
      *
-     * @global global $OUTPUT
-     * @global global $PAGE
      * @param mod_dialogue_conversations $conversations
      * @return string
      */
     public function conversation_listing(\mod_dialoguegrade\conversations $conversations) {
-        global $PAGE;
         $dialogue = $conversations->dialogue;
         $cm       = $conversations->dialogue->cm;
 
@@ -161,10 +156,11 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
             $a->start  = ($conversations->page) ? $conversations->page * $conversations->limit : 1;
             $a->end    = $conversations->page * $conversations->limit + $rowsreturned;
             $a->total  = $rowsmatched;
-            $html .= html_writer::tag('h6', get_string('listpaginationheader', 'dialoguegrade', $a), array('class'=>'pull-right'));
+            $html .= html_writer::tag('h6', get_string('listpaginationheader', 'dialoguegrade', $a),
+                                      array('class' => 'pull-right'));
             $html .= html_writer::end_div();
 
-            $html .= html_writer::start_tag('table', array('class'=>'conversation-list table table-hover table-condensed'));
+            $html .= html_writer::start_tag('table', array('class' => 'conversation-list table table-hover table-condensed'));
             $html .= html_writer::start_tag('tbody');
             foreach ($list as $record) {
                 $datattributes = array('data-redirect' => 'conversation',
@@ -176,7 +172,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
                 $statelabel = '';
                 if ($record->state == \mod_dialoguegrade\dialogue::STATE_CLOSED) {
                     $statelabel = html_writer::tag('span', get_string('closed', 'dialoguegrade'),
-                                                   array('class'=>'state-indicator state-closed'));
+                                                   array('class' => 'state-indicator state-closed'));
                 }
                 $html .= html_writer::tag('td', $statelabel);
 
@@ -187,14 +183,15 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
                     if ($unreadcount > 0) {
                         $invite = get_string('reply', 'dialoguegrade');
                         $badgeclass = 'badge label-info';
-                        $badge = html_writer::span($unreadcount, $badgeclass, array('title'=> get_string('numberunread', 'dialoguegrade', $unreadcount)));
+                        $badge = html_writer::span($unreadcount, $badgeclass,
+                                                   array('title' => get_string('numberunread', 'dialoguegrade', $unreadcount)));
                     }
                     $html .= html_writer::tag('td', $badge . '&nbsp;<div class="btn btn-small">'. $invite .'</div>');
                 }
 
                 if (isset($record->userid)) {
                     $displayuser = dialoguegrade_get_user_details($dialogue, $record->userid);
-                    $avatar = $this->output->user_picture($displayuser, array('class'=> 'userpicture img-rounded', 'size' => 48));
+                    $avatar = $this->output->user_picture($displayuser, array('class' => 'userpicture img-rounded', 'size' => 48));
                     $html .= html_writer::tag('td', $avatar);
                     $html .= html_writer::tag('td', fullname($displayuser));
                 }
@@ -208,9 +205,10 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
 
                     $participants = dialoguegrade_get_conversation_participants($dialogue, $record->conversationid);
                     $html .= html_writer::start_div();
-                    foreach($participants as $participantid) {
+                    foreach ($participants as $participantid) {
                         $participant = dialoguegrade_get_user_details($dialogue, $participantid);
-                        $picture = $this->output->user_picture($participant, array('class'=>'userpicture img-rounded', 'size'=>16));
+                        $picture = $this->output->user_picture($participant,
+                                                               array('class' => 'userpicture img-rounded', 'size' => 16));
                         $html .= html_writer::tag('span', $picture.' '.fullname($participant),
                                                     array('class' => 'participant'));
                     }
@@ -236,7 +234,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
                 $viewlink = html_writer::link(new moodle_url('conversation.php', $viewurlparams),
                                               get_string('view'));
 
-                $html .= html_writer::tag('td', $viewlink, array('class'=>'nonjs-control'));
+                $html .= html_writer::tag('td', $viewlink, array('class' => 'nonjs-control'));
 
                 $html .= html_writer::end_tag('tr');
             }
@@ -244,7 +242,7 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('tbody');
             $html .= html_writer::end_tag('table');
 
-            $pagination = new paging_bar($rowsmatched, $conversations->page, $conversations->limit, $PAGE->url);
+            $pagination = new paging_bar($rowsmatched, $conversations->page, $conversations->limit, $this->page->url);
 
             $html .= $this->output->render($pagination);
         }
@@ -279,8 +277,8 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
         $valeurnote = $reply->note;
         $affnote = "";
         if (isset($valeurnote)) {
-            $noteMax = $reply->dialogue->activityrecord->grade;
-            $affnote = "<div class='grade'>Note<br><center><small>" . $valeurnote . " / " . $noteMax. " </small></center></div>";
+            $notemax = $reply->dialogue->activityrecord->grade;
+            $affnote = "<div class='grade'>Note<br><center><small>" . $valeurnote . " / " . $notemax. " </small></center></div>";
         }
         $html .= html_writer::div($avatar .$affnote, 'conversation-object pull-left');
         $html .= html_writer::start_div('conversation-body');

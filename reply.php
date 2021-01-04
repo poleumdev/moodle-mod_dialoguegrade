@@ -74,7 +74,7 @@ if (!$reply->is_author()) {
     throw new \moodle_exception("You do not have permission to view this reply it doesn't
                                 belong to you!");
 }
-// initialise and check form submission
+// Initialise and check form submission.
 $form = $reply->initialise_form();
 if ($form->is_submitted()) {
     $formaction = $form->get_submit_action();
@@ -87,7 +87,7 @@ if ($form->is_submitted()) {
 
             redirect($returnurl);
         case 'send':
-            if ($form->is_validated()){
+            if ($form->is_validated()) {
                 $reply->save_form_data();
                 $reply->send();
                 $eventparams = array( 'context' => $context, 'objectid' => $reply->messageid,
@@ -97,7 +97,7 @@ if ($form->is_submitted()) {
 
                 $completion = new completion_info($course);
                 if ($completion->is_enabled($cm) ) {
-                    $completion->update_state($cm,COMPLETION_COMPLETE);
+                    $completion->update_state($cm, COMPLETION_COMPLETE);
                 }
 
                 redirect($returnurl, get_string('replysent', 'dialoguegrade'));
@@ -110,7 +110,7 @@ if ($form->is_submitted()) {
                 redirect($draftsurl, get_string('changessaved'));
             }
             break;
-       case 'trash':
+        case 'trash':
             $reply->trash();
             redirect($draftsurl, get_string('draftreplytrashed', 'dialoguegrade'));
     }

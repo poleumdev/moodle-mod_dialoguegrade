@@ -8,14 +8,14 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once (dirname ( __FILE__ ) . '/../../../config.php');
-require_once ($CFG->dirroot . '/mod/dialoguegrade/locallib.php');
+require_once(dirname ( __FILE__ ) . '/../../../config.php');
+require_once($CFG->dirroot . '/mod/dialoguegrade/locallib.php');
 
 $cmid = required_param ( 'cmid', PARAM_INT );
 
@@ -57,9 +57,8 @@ $PAGE->set_url ( $pageurl );
 
 require_capability ( 'mod/dialoguegrade:open', $context );
 
-$dialogue = new \mod_dialoguegrade\dialogue ( $cm, $course, $activityrecord );
-$conversation = new \mod_dialoguegrade\conversation ( $dialogue ); // New
-                                                                // conversation.
+$dialogue = new \mod_dialoguegrade\dialogue($cm, $course, $activityrecord);
+$conversation = new \mod_dialoguegrade\conversation($dialogue); // New conversation.
 
 $form = $conversation->initialise_form ();
 if ($form->is_submitted ()) {
@@ -73,7 +72,7 @@ if ($form->is_submitted ()) {
                 $conversation->send ();
 
                 $sendmessage = get_string ( 'conversationopened', 'dialoguegrade' );
-                // Trigger conversation created event
+                // Trigger conversation created event.
                 $eventparams = array (
                         'context' => $context,
                         'objectid' => $conversation->conversationid
@@ -83,7 +82,7 @@ if ($form->is_submitted ()) {
 
                 redirect ( $returnurl, $sendmessage );
             }
-            break; // leave switch to display form page
+            break; // Leave switch to display form page.
         case 'save' :
             $conversation->save_form_data ();
             redirect ( $draftsurl, get_string ( 'changessaved' ) );
@@ -93,7 +92,7 @@ if ($form->is_submitted ()) {
     }
 }
 
-// Display form page
+// Display form page.
 echo $OUTPUT->header ();
 echo $OUTPUT->heading ( $activityrecord->name );
 if (! empty ( $dialogue->activityrecord->intro )) {

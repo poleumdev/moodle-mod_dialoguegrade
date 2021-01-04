@@ -57,8 +57,6 @@ class reply extends message {
             $record = $DB->get_record_sql($sql, $params, MUST_EXIST);
         }
 
-        // @todo - check dialogueid and conversationid
-
         $this->_messageid = $record->id;
         $this->_authorid = $record->authorid;
         $this->_body = $record->body;
@@ -80,9 +78,9 @@ class reply extends message {
         $dialogueid = $this->dialogue->dialogueid;
         $conversationid = $this->conversation->conversationid;
 
-        $form = new \mod_dialoguegrade_reply_form('reply.php'); // point specifically
+        $form = new \mod_dialoguegrade_reply_form('reply.php'); // Point specifically.
         $form->set_data(array('note' => $this->_note));
-        // setup important hiddens
+        // Setup important hiddens.
         $form->set_data(array('id' => $cm->id));
         $form->set_data(array('dialogueid' => $dialogueid));
         $form->set_data(array('conversationid' => $conversationid));
@@ -92,32 +90,30 @@ class reply extends message {
         } else {
             $form->set_data(array('action' => 'edit'));
         }
-        // html on _body
-        $this->_body = file_prepare_draft_area($this->_bodydraftid, $context->id, 'mod_dialoguegrade', 'message', $this->_messageid, \mod_dialoguegrade_reply_form::editor_options(), $this->_body);
+        // Html on _body.
+        $this->_body = file_prepare_draft_area($this->_bodydraftid, $context->id, 'mod_dialoguegrade', 'message',
+                                               $this->_messageid, \mod_dialoguegrade_reply_form::editor_options(), $this->_body);
 
         $form->set_data(array('body' =>
             array('text' => $this->_body,
                 'format' => $this->_bodyformat,
                 'itemid' => $this->_bodydraftid)));
 
-        // setup attachments, set new $draftitemid directly on _attachmentsdraftid
-        file_prepare_draft_area($this->_attachmentsdraftid, $context->id, 'mod_dialoguegrade', 'attachment', $this->_messageid, \mod_dialoguegrade_reply_form::attachment_options());
+        // Setup attachments, set new $draftitemid directly on _attachmentsdraftid.
+        file_prepare_draft_area($this->_attachmentsdraftid, $context->id, 'mod_dialoguegrade',
+                                'attachment', $this->_messageid, \mod_dialoguegrade_reply_form::attachment_options());
 
-        // using a post array for attachments
+        // Using a post array for attachments.
         $form->set_data(array('attachments[itemid]' => $this->_attachmentsdraftid));
 
-        // remove any form buttons the user shouldn't have
+        // Remove any form buttons the user shouldn't have.
         if ($this->conversation->state == dialogue::STATE_CLOSED) {
             $form->remove_from_group('send', 'actionbuttongroup');
         }
 
-        // remove any unecessary buttons
+        // Remove any unecessary buttons.
         if (($USER->id != $this->author->id) or is_null($this->messageid)) {
             $form->remove_from_group('delete', 'actionbuttongroup');
-        }
-
-        // remove any unecessary buttons
-        if (($USER->id != $this->author->id) or is_null($this->messageid)) {
             $form->remove_from_group('trash', 'actionbuttongroup');
         }
 
@@ -125,7 +121,7 @@ class reply extends message {
     }
 
     public function save_form_data() {
-        // get incoming form data
+        // Get incoming form data.
         $data = $this->_form->get_submitted_data();
         $thenote = null;
         if (isset($data->note)) {
@@ -139,14 +135,14 @@ class reply extends message {
 
         $this->_formdatasaved = true;
     }
-    
+
     public function send() {
         global $USER, $DB;
 
         $context = $this->dialogue->context;
         $conversationid = $this->conversation->conversationid;
 
-        // check permission
+        // Check permission.
         if ($USER->id != $this->_authorid or !has_capability('mod/dialoguegrade:reply', $context)) {
             throw new \moodle_exception("This doesn't belong to you!");
         }
@@ -156,11 +152,10 @@ class reply extends message {
                  WHERE dm.conversationid = :conversationid";
 
         $params = array('conversationid' => $conversationid);
-        // get last conversation index
+        // Get last conversation index.
         $index = $DB->get_field_sql($sql, $params);
-        // increment index
         $index++;
-        // set the conversation index, important for order of display
+        // Set the conversation index, important for order of display.
         $DB->set_field('dialoguegrade_messages', 'conversationindex', $index, array('id' => $this->_messageid));
 
         parent::send();

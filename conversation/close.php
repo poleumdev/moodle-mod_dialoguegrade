@@ -40,7 +40,6 @@ $pageurl = new moodle_url('/mod/dialoguegrade/conversation/close.php');
 $pageurl->param('id', $conversationrecord->id);
 $returnurl = new moodle_url('/mod/dialoguegrade/view.php', array('id' => $cm->id));
 
-//$PAGE->set_pagelayout('base');
 $PAGE->set_cm($cm, $course, $activityrecord);
 $PAGE->set_context($context);
 $PAGE->set_cacheable(false);
@@ -51,7 +50,7 @@ $conversation = new \mod_dialoguegrade\conversation($dialogue, (int) $conversati
 
 if (!empty($confirm) && confirm_sesskey()) {
     $conversation->close();
-    // Trigger conversation closed event
+    // Trigger conversation closed event.
     $eventparams = array(
         'context' => $context,
         'objectid' => $conversation->conversationid
@@ -64,6 +63,7 @@ if (!empty($confirm) && confirm_sesskey()) {
 
 echo $OUTPUT->header($activityrecord->name);
 $pageurl->param('confirm', $conversation->conversationid);
-$notification = $OUTPUT->notification(get_string('conversationcloseconfirm', 'dialoguegrade', $conversation->subject), 'notifymessage');
+$notification = $OUTPUT->notification(get_string('conversationcloseconfirm', 'dialoguegrade', $conversation->subject),
+                                      'notifymessage');
 echo $OUTPUT->confirm($notification, $pageurl, $returnurl);
 echo $OUTPUT->footer();

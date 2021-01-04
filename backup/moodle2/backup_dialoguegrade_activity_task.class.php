@@ -20,7 +20,9 @@
  * @copyright 2010 -
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-require_once($CFG->dirroot . '/mod/dialoguegrade/backup/moodle2/backup_dialoguegrade_stepslib.php'); // Because it exists (must)
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/dialoguegrade/backup/moodle2/backup_dialoguegrade_stepslib.php');
 
 /**
  * backup task that provides all the settings and steps to perform one

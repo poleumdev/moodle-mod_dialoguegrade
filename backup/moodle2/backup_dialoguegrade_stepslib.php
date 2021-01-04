@@ -28,12 +28,10 @@ defined('MOODLE_INTERNAL') || die;
  */
 class backup_dialoguegrade_activity_structure_step extends backup_activity_structure_step {
     protected function define_structure() {
-
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-
-        // Define each element separated
+        // Define each element separated.
         $dialogue = new backup_nested_element('dialoguegrade', array('id'),
                                               array('course',
                                                     'name',
@@ -90,7 +88,7 @@ class backup_dialoguegrade_activity_structure_step extends backup_activity_struc
                                                  'flag',
                                                  'timemodified'));
 
-        // Build the tree
+        // Build the tree.
         $dialogue->add_child($conversations);
         $conversations->add_child($conversation);
 
@@ -103,9 +101,9 @@ class backup_dialoguegrade_activity_structure_step extends backup_activity_struc
         $conversation->add_child($flags);
         $flags->add_child($flag);
 
-        // Define sources
+        // Define sources.
         $dialogue->set_source_table('dialoguegrade', array('id' => backup::VAR_ACTIVITYID));
-        // All these source definitions only happen if we are including user info
+        // All these source definitions only happen if we are including user info.
         if ($userinfo) {
             $conversation->set_source_table('dialoguegrade_conversations', array('dialogueid' => backup::VAR_PARENTID));
             $participant->set_source_table('dialoguegrade_participants', array('conversationid' => backup::VAR_PARENTID));
@@ -114,17 +112,17 @@ class backup_dialoguegrade_activity_structure_step extends backup_activity_struc
 
         }
 
-        // Define id annotations
+        // Define id annotations.
         $participant->annotate_ids('user', 'userid');
         $message->annotate_ids('user', 'authorid');
         $flag->annotate_ids('user', 'userid');
 
-        // Define file annotations
-        $dialogue->annotate_files('mod_dialoguegrade', 'intro', null); // This file area hasn't itemid
+        // Define file annotations.
+        $dialogue->annotate_files('mod_dialoguegrade', 'intro', null); // This file area hasn't itemid.
         $message->annotate_files('mod_dialoguegrade', 'message', 'id');
         $message->annotate_files('mod_dialoguegrade', 'attachment', 'id');
 
-        // Return the root element, wrapped into standard activity structure
+        // Return the root element, wrapped into standard activity structure.
         return $this->prepare_activity_structure($dialogue);
     }
 }

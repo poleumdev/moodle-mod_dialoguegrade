@@ -14,17 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define('AJAX_SCRIPT', true);
-
 /**
  * Routine ajax.
  * @package mod-dialogue
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+define('AJAX_SCRIPT', true);
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once($CFG->dirroot.'/mod/dialoguegrade/locallib.php');
-
+require_login();
 // Course module identifier.
 $id = required_param('id', PARAM_INT);
 // Search text.
