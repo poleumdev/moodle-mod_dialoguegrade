@@ -39,7 +39,7 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
-    
+
     /* to be a potential teacher : students can choose a teacher and open a "carnet de bord" | add jjupin march 25, 2019 */
     'mod/dialoguegrade:bepotentialteacher' => array(
         'captype' => 'read',
@@ -87,7 +87,7 @@ $capabilities = array(
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_PREVENT,
-        	'editingteacher' => CAP_PREVENT,
+            'editingteacher' => CAP_PREVENT,
             'manager' => CAP_PREVENT
         )
     ),
@@ -144,7 +144,7 @@ $capabilities = array(
         'archetypes' => array(
             'student' => CAP_PREVENT,
             'teacher' => CAP_PREVENT,
-        	'editingteacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_PREVENT
         )
     ),
@@ -159,23 +159,23 @@ $capabilities = array(
             'manager' => CAP_PREVENT
         )
     ),
-		
-	'mod/dialoguegrade:grading' => array(
-		'captype' => 'read',
-		'contextlevel' => CONTEXT_MODULE,
-		'archetypes' => array(
-					'teacher' => CAP_ALLOW,
-					'editingteacher' => CAP_ALLOW,
-		)
-	),
-	
-	'mod/dialoguegrade:multipleconversation' => array(
-		'captype' => 'read',
-		'contextlevel' => CONTEXT_MODULE,
-		'archetypes' => array(
-					'teacher' => CAP_ALLOW,
-					'editingteacher' => CAP_ALLOW,
-		)
-	),
+
+    'mod/dialoguegrade:grading' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+                    'teacher' => CAP_ALLOW,
+                    'editingteacher' => CAP_ALLOW,
+        )
+    ),
+
+    'mod/dialoguegrade:multipleconversation' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+                    'teacher' => CAP_ALLOW,
+                    'editingteacher' => CAP_ALLOW,
+        )
+    ),
 
 );

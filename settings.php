@@ -32,21 +32,24 @@ defined('MOODLE_INTERNAL') || die;
 if ($hassiteconfig) {
     require_once($CFG->dirroot.'/mod/dialoguegrade/lib.php');
 
-    // whether to provide unread post count
-    $settings->add(new admin_setting_configcheckbox('dialoguegrade/trackunread', new lang_string('configtrackunread', 'dialoguegrade'),
-                   '', 1));
-    // Default total maxbytes of attached files
+    // Whether to provide unread post count.
+    $settings->add(new admin_setting_configcheckbox('dialoguegrade/trackunread',
+                    new lang_string('configtrackunread', 'dialoguegrade'), '', 1));
+    // Default total maxbytes of attached files.
     if (isset($CFG->maxbytes)) {
-        $settings->add(new admin_setting_configselect('dialoguegrade/maxbytes', new lang_string('maxattachmentsize', 'dialoguegrade'),
+        $settings->add(new admin_setting_configselect('dialoguegrade/maxbytes',
+                    new lang_string('maxattachmentsize', 'dialoguegrade'),
                     new lang_string('configmaxbytes', 'dialoguegrade'), 512000, get_max_upload_sizes($CFG->maxbytes)));
     }
 
-    $choices = array(0,1,2,3,4,5,6,7,8,9,10,20);
-    // Default number of attachments allowed per post in all dialogues
-    $settings->add(new admin_setting_configselect('dialoguegrade/maxattachments', new lang_string('maxattachments', 'dialoguegrade'),
+    $choices = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20);
+    // Default number of attachments allowed per post in all dialogues.
+    $settings->add(new admin_setting_configselect('dialoguegrade/maxattachments',
+                new lang_string('maxattachments', 'dialoguegrade'),
                 new lang_string('configmaxattachments', 'dialoguegrade'), 5, $choices));
 
-    $settings->add(new admin_setting_configcheckbox('dialoguegrade/viewconversationsbyrole', new lang_string('viewconversationsbyrole', 'dialoguegrade'),
+    $settings->add(new admin_setting_configcheckbox('dialoguegrade/viewconversationsbyrole',
+                   new lang_string('viewconversationsbyrole', 'dialoguegrade'),
                    new lang_string('configviewconversationsbyrole', 'dialoguegrade'), 0));
 
 }

@@ -70,7 +70,7 @@ abstract class conversations implements \renderable {
 
     /**
      * Please do not call this method directly
-     * 
+     *
      * @return /dialogue
      * @throws coding_exception
      */

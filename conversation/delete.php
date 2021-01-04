@@ -50,7 +50,7 @@ $conversation = new \mod_dialoguegrade\conversation($dialogue, (int) $conversati
 
 if (!empty($confirm) && confirm_sesskey()) {
     $conversation->delete();
-    // Trigger conversation deleted event
+    // Trigger conversation deleted event.
     $eventparams = array(
         'context' => $context,
         'objectid' => $conversation->conversationid
@@ -63,6 +63,7 @@ if (!empty($confirm) && confirm_sesskey()) {
 }
 echo $OUTPUT->header($activityrecord->name);
 $pageurl->param('confirm', $conversation->conversationid);
-$notification = $OUTPUT->notification(get_string('conversationdeleteconfirm', 'dialoguegrade', $conversation->subject), 'notifyproblem');
+$notification = $OUTPUT->notification(get_string('conversationdeleteconfirm', 'dialoguegrade', $conversation->subject),
+                                      'notifyproblem');
 echo $OUTPUT->confirm($notification, $pageurl, $returnurl);
 echo $OUTPUT->footer();

@@ -67,7 +67,7 @@ $PAGE->set_url($pageurl);
 $dialogue = new \mod_dialoguegrade\dialogue($cm, $course, $activityrecord);
 $conversation = new \mod_dialoguegrade\conversation($dialogue, $conversationid);
 
-// form actions
+// Form actions.
 if ($action == 'create' or $action == 'edit') {
     require_capability('mod/dialoguegrade:open', $context);
     $form = $conversation->initialise_form();
@@ -75,33 +75,33 @@ if ($action == 'create' or $action == 'edit') {
         $submitaction = $form->get_submit_action();
         switch ($submitaction) {
             case 'cancel':
-            	$completion=new completion_info($course);
-            	if($completion->is_enabled($cm) ) {//&& $forum->completionposts
-            		$completion->update_state($cm,COMPLETION_COMPLETE);
-            	}
+                $completion = new completion_info($course);
+                if ($completion->is_enabled($cm)) {
+                    $completion->update_state($cm, COMPLETION_COMPLETE);
+                }
                 redirect($returnurl);
-                
+
             case 'send':
-                if ($form->is_validated()){
+                if ($form->is_validated()) {
                     $conversation->save_form_data();
                     $conversation->send();
                     $sendmessage = get_string('conversationopened', 'dialoguegrade');
-                    // Trigger conversation created event
+                    // Trigger conversation created event.
                     $eventparams = array(
                             'context' => $context,
                             'objectid' => $conversation->conversationid
                     );
                     $event = \mod_dialoguegrade\event\conversation_created::create($eventparams);
                     $event->trigger();
-                    
-                    $completion=new completion_info($course);
-                    if($completion->is_enabled($cm) ) {
-                    	$completion->update_state($cm,COMPLETION_COMPLETE);
+
+                    $completion = new completion_info($course);
+                    if ($completion->is_enabled($cm)) {
+                        $completion->update_state($cm, COMPLETION_COMPLETE);
                     }
-                    
+
                     redirect($returnurl, $sendmessage);
                 }
-                break; // leave switch to display form page
+                break; // Leave switch to display form page.
             case 'save':
                 $conversation->save_form_data();
                 redirect($draftsurl, get_string('changessaved'));
@@ -111,7 +111,7 @@ if ($action == 'create' or $action == 'edit') {
         }
     }
 
-    // display form page
+    // Display form page.
     echo $OUTPUT->header();
     echo $OUTPUT->heading($activityrecord->name);
     if (!empty($dialogue->activityrecord->intro)) {
@@ -122,11 +122,11 @@ if ($action == 'create' or $action == 'edit') {
     exit;
 }
 
-// close conversation
+// Close conversation.
 if ($action == 'close') {
     if (!empty($confirm) && confirm_sesskey()) {
         $conversation->close();
-        // Trigger conversation closed event
+        // Trigger conversation closed event.
         $eventparams = array(
             'context' => $context,
             'objectid' => $conversation->conversationid
@@ -138,17 +138,18 @@ if ($action == 'close') {
     }
     echo $OUTPUT->header($activityrecord->name);
     $pageurl->param('confirm', $conversationid);
-    $notification = $OUTPUT->notification(get_string('conversationcloseconfirm', 'dialoguegrade', $conversation->subject), 'notifymessage');
+    $notification = $OUTPUT->notification(get_string('conversationcloseconfirm', 'dialoguegrade', $conversation->subject),
+                                          'notifymessage');
     echo $OUTPUT->confirm($notification, $pageurl, $returnurl);
     echo $OUTPUT->footer();
     exit;
 }
 
-// delete conversation
+// Delete conversation.
 if ($action == 'delete') {
     if (!empty($confirm) && confirm_sesskey()) {
         $conversation->delete();
-        // Trigger conversation created event
+        // Trigger conversation created event.
         $eventparams = array(
             'context' => $context,
             'objectid' => $conversation->conversationid
@@ -161,40 +162,42 @@ if ($action == 'delete') {
     }
     echo $OUTPUT->header($activityrecord->name);
     $pageurl->param('confirm', $conversationid);
-    $notification = $OUTPUT->notification(get_string('conversationdeleteconfirm', 'dialoguegrade', $conversation->subject), 'notifyproblem');
+    $notification = $OUTPUT->notification(get_string('conversationdeleteconfirm', 'dialoguegrade', $conversation->subject),
+                                          'notifyproblem');
     echo $OUTPUT->confirm($notification, $pageurl, $returnurl);
     echo $OUTPUT->footer();
     exit;
 }
 
-// ready for viewing, let's just make sure not a draft, possible url manipulation by user
+// Ready for viewing, let's just make sure not a draft, possible url manipulation by user.
 if ($conversation->state == \mod_dialoguegrade\dialogue::STATE_DRAFT) {
     redirect($returnurl);
 }
 
-if ($conversation->state == \mod_dialoguegrade\dialogue::STATE_OPEN or $conversation->state == \mod_dialoguegrade\dialogue::STATE_CLOSED) {
+if ($conversation->state == \mod_dialoguegrade\dialogue::STATE_OPEN or
+    $conversation->state == \mod_dialoguegrade\dialogue::STATE_CLOSED) {
     if (!has_capability('mod/dialoguegrade:viewany', $context) and !$conversation->is_participant()) {
         throw new moodle_exception('nopermission');
     }
 }
-// view conversation by default
+// View conversation by default.
 $renderer = $PAGE->get_renderer('mod_dialoguegrade');
 echo $OUTPUT->header($activityrecord->name);
 echo $renderer->render($conversation);
 $conversation->mark_read();
 
-// output reply form if meets criteria
+// Output reply form if meets criteria.
 $hasreplycapability = (has_capability('mod/dialoguegrade:reply', $context) or
                        has_capability('mod/dialoguegrade:replyany', $context));
 
-// conversation is open and user can reply... then output reply form
+// Conversation is open and user can reply... then output reply form.
 if ($hasreplycapability and $conversation->state == \mod_dialoguegrade\dialogue::STATE_OPEN) {
     $reply = $conversation->reply();
     $form = $reply->initialise_form();
     $form->display();
 }
 
-// render replies
+// Render replies.
 if ($conversation->replies()) {
     foreach ($conversation->replies() as $reply) {
         echo $renderer->render($reply);
@@ -203,7 +206,7 @@ if ($conversation->replies()) {
 }
 
 echo $OUTPUT->footer($course);
-// Trigger conversation viewed event
+// Trigger conversation viewed event.
 $eventparams = array(
     'context' => $context,
     'objectid' => $conversation->conversationid

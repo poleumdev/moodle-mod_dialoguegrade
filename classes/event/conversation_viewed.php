@@ -64,7 +64,7 @@ class conversation_viewed extends \core\event\base {
      */
     public function get_url() {
 
-        $url = new \moodle_url('/mod/dialoguegrade/conversation.php', array('conversationid' => $this->objectid, 
+        $url = new \moodle_url('/mod/dialoguegrade/conversation.php', array('conversationid' => $this->objectid,
                                                                        'id' => $this->contextinstanceid));
 
         return $url;

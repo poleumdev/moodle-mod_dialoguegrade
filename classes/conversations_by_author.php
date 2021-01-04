@@ -44,7 +44,7 @@ class conversations_by_author extends conversations {
         if (empty($this->states)) {
             throw new \moodle_exception("At least one state must be set");
         }
-        
+
         list($instatesql, $instateparams) = $DB->get_in_or_equal($this->states, SQL_PARAMS_NAMED, 'lastmessagestate');
 
         foreach ($instateparams as $key => $value) {
@@ -86,7 +86,7 @@ class conversations_by_author extends conversations {
                               'attachments' => 'dm.attachments',
                               'state' => 'dm.state',
                               'timemodified' => 'dm.timemodified');
-        
+
         $this->set_unread_field();
     }
 
@@ -124,21 +124,15 @@ class conversations_by_author extends conversations {
 
     public function records() {
         global $DB;
-
         $records = array();
-
         $this->setup();
-
         $fields = implode(",\n", $this->fields);
-
         $select = "SELECT $fields $this->basesql $this->orderbysql";
-
         $offset = $this->page * $this->limit;
-
         $recordset = $DB->get_recordset_sql($select, $this->params, $offset, $this->limit);
 
         if ($recordset->valid()) {
-            foreach($recordset as $record) {
+            foreach ($recordset as $record) {
                 $records[] = $record;
             }
         }
@@ -152,7 +146,7 @@ class conversations_by_author extends conversations {
         global $DB;
 
         $this->setup();
-        
+
         return $DB->count_records_sql("SELECT COUNT(1) " . $this->basesql, $this->params);
     }
 
