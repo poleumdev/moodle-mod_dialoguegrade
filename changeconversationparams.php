@@ -80,7 +80,7 @@ foreach ($result as $teacher) {
     $teachersid[] = $enreg->id;
 }
 $toform = array('my_array' => array('teachers' => $teachers));
-$mform = new changeparamsform($null, $toform);
+$mform = new changeparamsform(null, $toform);
 
 $valdefault = array(); // Valeurs par défaut pour le formulaire.
 $valdefault['subject'] = $conversation->__get("subject");
