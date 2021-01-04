@@ -27,17 +27,26 @@ defined('MOODLE_INTERNAL') || die();
  */
 function dialoguegrade_supports($feature) {
     switch($feature) {
-        case FEATURE_GROUPS:                  return false;
-        case FEATURE_GROUPINGS:               return false;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_COMPLETION_HAS_RULES:    return true;
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_GRADE_OUTCOMES:          return true;
-        case FEATURE_RATE:                    return false;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-
-        default: return null;
+        case FEATURE_GROUPS:
+            return false;
+        case FEATURE_GROUPINGS:
+            return false;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return true;
+        case FEATURE_RATE:
+            return false;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        default:
+            return null;
     }
 }
 
@@ -60,7 +69,7 @@ function dialoguegrade_add_instance($data) {
     $data->timecreated = time();
     $data->timemodified = $data->timecreated;
 
-    $result =  $DB->insert_record('dialoguegrade', $data);
+    $result = $DB->insert_record('dialoguegrade', $data);
     $data->id = $result;
     dialoguegrade_grade_item_update($data);
     return $result;
@@ -97,7 +106,7 @@ function dialoguegrade_update_instance($data, $mform) {
  */
 function dialoguegrade_delete_instance($id) {
     global $DB;
-    $dialogue = $DB->get_record('dialoguegrade', array('id'=>$id), '*', MUST_EXIST);
+    $dialogue = $DB->get_record('dialoguegrade', array('id' => $id), '*', MUST_EXIST);
 
     $cm = get_coursemodule_from_instance('dialoguegrade', $dialogue->id, $dialogue->course, false, MUST_EXIST);
 
@@ -105,18 +114,18 @@ function dialoguegrade_delete_instance($id) {
 
     $fs = get_file_storage();
 
-    // delete files
+    // Delete files.
     $fs->delete_area_files($context->id);
-    // delete flags
-    $DB->delete_records('dialoguegrade_flags', array('dialogueid'=>$dialogue->id));
-    // delete participants
-    $DB->delete_records('dialoguegrade_participants', array('dialogueid'=>$dialogue->id));
-    // delete messages
-    $DB->delete_records('dialoguegrade_messages', array('dialogueid'=>$dialogue->id));
-    // delete conversations
-    $DB->delete_records('dialoguegrade_conversations', array('dialogueid'=>$dialogue->id));
-    // delete dialogue
-    $DB->delete_records('dialoguegrade', array('id'=>$dialogue->id));
+    // Delete flags.
+    $DB->delete_records('dialoguegrade_flags', array('dialogueid' => $dialogue->id));
+    // Delete participants.
+    $DB->delete_records('dialoguegrade_participants', array('dialogueid' => $dialogue->id));
+    // Delete messages.
+    $DB->delete_records('dialoguegrade_messages', array('dialogueid' => $dialogue->id));
+    // Delete conversations.
+    $DB->delete_records('dialoguegrade_conversations', array('dialogueid' => $dialogue->id));
+    // Delete dialogue.
+    $DB->delete_records('dialoguegrade', array('id' => $dialogue->id));
 
     return true;
 }
@@ -130,7 +139,7 @@ function dialoguegrade_cm_info_view(cm_info $cm) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/dialoguegrade/locallib.php');
 
-    // Get tracking status (once per request)
+    // Get tracking status (once per request).
     static $initialised;
     static $usetracking, $strunreadmessagesone;
     if (!isset($initialised)) {
@@ -238,7 +247,7 @@ function dialoguegrade_get_view_actions() {
  * @return array of post action labels
  */
 function dialoguegrade_get_post_actions() {
-    return array('open conversation', 'close conversation', 'delete conversation','reply');
+    return array('open conversation', 'close conversation', 'delete conversation', 'reply');
 }
 
 /**
@@ -265,17 +274,17 @@ function dialoguegrade_can_track_dialogue($user = false) {
     global $USER, $CFG;
 
     $trackunread = get_config('dialoguegrade', 'trackunread');
-    // return unless enabled at site level
+    // Return unless enabled at site level.
     if (empty($trackunread)) {
         return false;
     }
 
-    // default to logged if no user passed as param
+    // Default to logged if no user passed as param.
     if ($user === false) {
         $user = $USER;
     }
 
-    // dont allow guests to track
+    // Dont allow guests to track.
     if (isguestuser($user) or empty($user->id)) {
         return false;
     }
@@ -310,15 +319,15 @@ function dialoguegrade_pluginfile($course, $cm, $context, $filearea, $args, $for
     }
 
     $itemid = (int)array_shift($args);
-    if (!$message = $DB->get_record('dialoguegrade_messages', array('id'=>$itemid))) {
+    if (!$message = $DB->get_record('dialoguegrade_messages', array('id' => $itemid))) {
         return false;
     }
 
-    if (!$conversation = $DB->get_record('dialoguegrade_conversations', array('id'=>$message->conversationid))) {
+    if (!$conversation = $DB->get_record('dialoguegrade_conversations', array('id' => $message->conversationid))) {
         return false;
     }
 
-    if (!$dialogue = $DB->get_record('dialoguegrade', array('id'=>$cm->instance))) {
+    if (!$dialogue = $DB->get_record('dialoguegrade', array('id' => $cm->instance))) {
         return false;
     }
 
@@ -326,15 +335,15 @@ function dialoguegrade_pluginfile($course, $cm, $context, $filearea, $args, $for
     $relativepath = implode('/', $args);
     $fullpath = "/$context->id/mod_dialoguegrade/$filearea/$itemid/$relativepath";
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-       return false;
+        return false;
     }
 
-    // Force non image formats to be downloaded
+    // Force non image formats to be downloaded.
     if (!$file->is_valid_image()) {
         $forcedownload = true;
     }
 
-    // Send the file
+    // Send the file.
     send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
@@ -517,7 +526,7 @@ function dialoguegrade_get_completion_state($course, $cm, $userid, $type) {
                and dialogueid=?";
     $conversationlist = $DB->get_recordset_sql ( $sql, array ($userid, $cm->instance));
     $data = array ();
-    foreach ( $conversationlist as $conv ) {
+    foreach ($conversationlist as $conv) {
         $data [] = $conv;
     }
     if (!isset($data[0])) {

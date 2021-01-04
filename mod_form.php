@@ -89,43 +89,46 @@ class mod_dialoguegrade_mod_form extends moodleform_mod {
         return $data;
     }
 
-    public function data_preprocessing(&$default_values) {
-        parent::data_preprocessing($default_values);
+    public function data_preprocessing(&$defaultvalues) {
+        parent::data_preprocessing($defaultvalues);
 
         // Set up the completion checkboxes which aren't part of standard data.
         // We also make the default value (if you turn on the checkbox) for those
         // numbers to be 1, this will not apply unless checkbox is ticked.
-        $default_values['completionsendenabled']= !empty($default_values['completionsend']) ? 1 : 0;
-        if (empty($default_values['completionsend'])) {
-            $default_values['completionsend']=1;
+        $defaultvalues['completionsendenabled'] = !empty($defaultvalues['completionsend']) ? 1 : 0;
+        if (empty($defaultvalues['completionsend'])) {
+            $defaultvalues['completionsend'] = 1;
         }
-        $default_values['completionrepliesenabled']=!empty($default_values['completionreplies']) ? 1 : 0;
-        if (empty($default_values['completionreplies'])) {
-            $default_values['completionreplies']=1;
+        $defaultvalues['completionrepliesenabled'] = !empty($defaultvalues['completionreplies']) ? 1 : 0;
+        if (empty($defaultvalues['completionreplies'])) {
+            $defaultvalues['completionreplies'] = 1;
         }
     }
 
     public function add_completion_rules() {
         $mform =& $this->_form;
 
-        $group=array();
+        $group = array();
         $group[] =& $mform->createElement('checkbox', 'completionsendenabled', '', get_string('completionsend', 'dialoguegrade'));
-        $group[] =& $mform->createElement('text', 'completionsend', '', array('size'=>3));
-        $mform->setType('completionsend',PARAM_INT);
+        $group[] =& $mform->createElement('text', 'completionsend', '', array('size' => 3));
+        $mform->setType('completionsend', PARAM_INT);
         $mform->addGroup($group, 'completionsendgroup', get_string('completionsendgroup', 'dialoguegrade'), array(' '), false);
-        $mform->disabledIf('completionsend','completionsendenabled','notchecked');
+        $mform->disabledIf('completionsend', 'completionsendenabled', 'notchecked');
 
-        $group=array();
-        $group[] =& $mform->createElement('checkbox', 'completionrepliesenabled', '',  get_string('completionreplies', 'dialoguegrade'));
-        $group[] =& $mform->createElement('text', 'completionreplies', '', array('size'=>3));
-        $mform->setType('completionreplies',PARAM_INT);
-        $mform->addGroup($group, 'completionrepliesgroup', get_string('completionrepliesgroup', 'dialoguegrade'), array(' '), false);
-        $mform->disabledIf('completionreplies','completionrepliesenabled','notchecked');
+        $group = array();
+        $group[] =& $mform->createElement('checkbox', 'completionrepliesenabled', '',
+                                            get_string('completionreplies', 'dialoguegrade'));
+        $group[] =& $mform->createElement('text', 'completionreplies', '', array('size' => 3));
+        $mform->setType('completionreplies', PARAM_INT);
+        $mform->addGroup($group, 'completionrepliesgroup', get_string('completionrepliesgroup', 'dialoguegrade'),
+                        array(' '), false);
+        $mform->disabledIf('completionreplies', 'completionrepliesenabled', 'notchecked');
 
-        return array('completionrepliesgroup','completionsendgroup');
+        return array('completionrepliesgroup', 'completionsendgroup');
     }
      // Validation.
     public function completion_rule_enabled($data) {
-        return (!empty($data['completionsendenabled']) && $data['completionsend']!=0) || (!empty($data['completionrepliesenabled']) && $data['completionreplies']!=0) ;
+        return (!empty($data['completionsendenabled']) && $data['completionsend'] != 0) ||
+               (!empty($data['completionrepliesenabled']) && $data['completionreplies'] != 0);
     }
 }
