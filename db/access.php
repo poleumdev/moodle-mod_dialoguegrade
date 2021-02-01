@@ -177,5 +177,12 @@ $capabilities = array(
                     'editingteacher' => CAP_ALLOW,
         )
     ),
+    'mod/dialoguegrade:modifytitle' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+                        'manager' => CAP_ALLOW
+        )
+    ),
 
 );

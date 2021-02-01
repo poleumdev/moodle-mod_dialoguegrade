@@ -49,14 +49,14 @@ if ($form->is_submitted()) {
             if ($form->is_validated()) {
                 $conversation->save_form_data();
                 $conversation->send();
-                    $sendmessage = get_string('conversationopened', 'dialoguegrade');
-                    // Trigger conversation created event.
-                    $eventparams = array(
+                $sendmessage = get_string('conversationopened', 'dialoguegrade');
+                // Trigger conversation created event.
+                $eventparams = array(
                         'context' => $context,
                         'objectid' => $conversation->conversationid
                     );
-                    $event = \mod_dialoguegrade\event\conversation_created::create($eventparams);
-                    $event->trigger();
+                $event = \mod_dialoguegrade\event\conversation_created::create($eventparams);
+                $event->trigger();
                 redirect($returnurl, $sendmessage);
             }
             break; // Leave switch to display form page.

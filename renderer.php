@@ -47,15 +47,17 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
         $html .= html_writer::start_div('conversation-heading');
         $html .= html_writer::tag('span', $conversation->subject, array('style' => 'font-size: 1.75rem;'));
 
-        $html .= html_writer::start_tag('ul', array('class' => "message-actions pull-right"));
-        $html .= html_writer::start_tag('li');
-        $editicon = html_writer::tag('i', '', array('class' => "fa fa-pencil-square-o"));
-        $editurl = new moodle_url('/mod/dialoguegrade/changeconversationparams.php');
-        $editurl->param('id', $cm->id);
-        $editurl->param('conversationid', $conversation->conversationid);
-        $html .= html_writer::link($editurl, $editicon);
-        $html .= html_writer::end_tag('li');
-        $html .= html_writer::end_tag('ul');
+        if (has_capability('mod/dialoguegrade:modifytitle', $context)) {
+            $html .= html_writer::start_tag('ul', array('class' => "message-actions pull-right"));
+            $html .= html_writer::start_tag('li');
+            $editicon = html_writer::tag('i', '', array('class' => "fa fa-pencil-square-o"));
+            $editurl = new moodle_url('/mod/dialoguegrade/changeconversationparams.php');
+            $editurl->param('id', $cm->id);
+            $editurl->param('conversationid', $conversation->conversationid);
+            $html .= html_writer::link($editurl, $editicon, array('title' => get_string('helpediticon', 'dialoguegrade')));
+            $html .= html_writer::end_tag('li');
+            $html .= html_writer::end_tag('ul');
+        }
 
         $html .= html_writer::end_div(); // Close header.
 
@@ -358,8 +360,9 @@ class mod_dialoguegrade_renderer extends plugin_renderer_base {
                     $html .= html_writer::start_tag('tbody');
                     $html .= html_writer::start_tag('tr');
                     $html .= html_writer::start_tag('td');
+
                     $html .= html_writer::link($downloadurl, html_writer::empty_tag('img',
-                                array('src' => $this->output->pix_url(file_mimetype_icon($mimetype)),
+                                array('src' => $this->output->image_url(file_mimetype_icon($mimetype)),
                                                                       'class' => 'icon',
                                                                       'alt' => $mimetype)));
                     $html .= html_writer::end_tag('td');

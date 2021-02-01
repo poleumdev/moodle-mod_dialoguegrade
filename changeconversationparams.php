@@ -119,9 +119,8 @@ if ($fromform = $mform->get_data()) {
     if ($datas->subject != $valdefault['subject']) {
         $request = " UPDATE {dialoguegrade_conversations}
                         SET subject = ?
-                      WHERE course = ? and dialogueid = ?";
-
-        $DB->execute($request, array($datas->subject, $course->id, $dialogueid));
+                      WHERE id = ?";
+        $DB->execute($request, array($datas->subject, $conversationid));
     }
 
     $messageid = $conversation->__get('messageid');

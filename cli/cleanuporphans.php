@@ -74,7 +74,6 @@ if ($interactive) {
 $starttime = microtime();
 mtrace("Server Time: ".date('r')."\n");
 
-// Do work!
 $sql = "SELECT dm.*
           FROM {dialoguegrade_messages} dm
          WHERE NOT EXISTS (SELECT dc.id
