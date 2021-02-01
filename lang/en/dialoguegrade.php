@@ -216,3 +216,5 @@ $string['dialoguegrade:bepotentialteacher'] = 'To be a potential teacher : stude
 $string['updatedialoguegrade'] = 'Changing the logbook';
 $string['updateok'] = 'Modifications made';
 $string['proofreader'] = 'Teacher';
+$string['helpediticon'] = 'Modify the subject and/or the corrector.';
+$string['dialoguegrade:modifytitle'] = 'Changing the title and the corrector of a log book';

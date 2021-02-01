@@ -221,4 +221,5 @@ $string['dialoguegrade:bepotentialteacher'] = 'Etre un enseignant potentiel : le
 $string['updatedialoguegrade'] = 'Modifier le carnet de bord';
 $string['updateok'] = 'Modifications réalisées';
 $string['proofreader'] = 'Correcteur';
-
+$string['helpediticon'] = 'Modifier le sujet et/ou le correcteur';
+$string['dialoguegrade:modifytitle'] = 'Modifier le sujet et/ou le correcteur d\'un carnet de bord';
