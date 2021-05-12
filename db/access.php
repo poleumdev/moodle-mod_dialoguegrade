@@ -179,7 +179,7 @@ $capabilities = array(
     ),
     'mod/dialoguegrade:modifytitle' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
                         'manager' => CAP_ALLOW
         )
