@@ -59,11 +59,11 @@ class backup_dialoguegrade_activity_task extends backup_activity_task {
 
         // Link to the list of dialogues.
         $search = "/(".$base."\/mod\/dialoguegrade\/index.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@DIALOGUEINDEX*$2@$', $content);
+        $content = preg_replace($search, '$@DIALOGUEGRADEINDEX*$2@$', $content);
 
         // Link to dialogue view by course module id.
         $search = "/(".$base."\/mod\/dialoguegrade\/view.php\?id\=)([0-9]+)/";
-        $content = preg_replace($search, '$@DIALOGUEVIEWBYID*$2@$', $content);
+        $content = preg_replace($search, '$@DIALOGUEGRADEVIEWBYID*$2@$', $content);
 
         return $content;
     }
